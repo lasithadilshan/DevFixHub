@@ -1,0 +1,66 @@
+---
+title: "Angular Cannot Find Module"
+description: "Fix error TS2307: Cannot find module '...' or its corresponding type declarations in Angular."
+slug: "angular-cannot-find-module"
+category: "Angular"
+tags: ["angular","typescript","modules","build"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "error TS2307: Cannot find module './user.service' or its corresponding type declarations."
+---
+
+# Angular Cannot Find Module
+
+Fix error TS2307: Cannot find module '...' or its corresponding type declarations in Angular.
+
+```text
+error TS2307: Cannot find module './user.service' or its corresponding type declarations.
+```
+
+## Problem Overview
+
+The Angular TypeScript compiler (ng build or ng serve) cannot locate the referenced service, component, or external npm module.
+
+## Why Does This Happen?
+
+- File path typo or incorrect relative import (e.g. missing ../ traversal).
+- Missing .ts extension or file renamed without updating imports.
+- The npm package is not installed or missing from package.json.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check relative file path and casing
+
+Verify that the service or component path matches the directory layout exactly.
+
+```typescript
+// Check relative directory:
+import { UserService } from '../services/user.service';
+```
+
+### Step 2: Step 2: Install missing package
+
+If importing from a library, ensure it is installed in node_modules.
+
+```bash
+npm install @angular/forms --save
+```
+
+
+## Common Mistakes to Avoid
+
+- Importing a component file before declaring it in a module or declaring standalone: true.
+
+## Prevention & Best Practices
+
+- Use modern Angular Standalone Components (Angular 14+) to simplify imports.
+
+
+## Frequently Asked Questions
+
+### Should I include .ts in import statements in Angular?
+
+No, TypeScript expects extensionless imports for .ts and .tsx files.
+

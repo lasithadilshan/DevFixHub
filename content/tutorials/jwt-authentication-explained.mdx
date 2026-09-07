@@ -1,0 +1,42 @@
+---
+title: "JWT Authentication Explained: Under the Hood"
+description: "Understand JSON Web Token structure: Header, Payload, Signature, hashing algorithms, and XSS/CSRF mitigation."
+slug: "jwt-authentication-explained"
+category: "Web Development"
+tags: ["jwt","security","authentication","tokens"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# JWT Authentication Explained: Under the Hood
+
+Understand JSON Web Token structure: Header, Payload, Signature, hashing algorithms, and XSS/CSRF mitigation.
+
+## Prerequisites
+- Basic web security and HTTP concepts
+
+## 1. Token Anatomy: Header.Payload.Signature
+
+A JWT is composed of three Base64URL-encoded strings separated by periods.
+
+```text
+// Example JWT structure:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+
+
+## Best Practices
+- Always store sensitive access tokens in memory or HttpOnly, Secure, SameSite=Strict cookies to protect against XSS.
+- Sign tokens using strong cryptographic algorithms (HMAC-SHA256 with 256-bit keys or asymmetric RSA/EdDSA).
+
+## Common Mistakes
+- Storing confidential data like passwords in JWT payloads; the payload is only encoded, not encrypted!
+
+## Frequently Asked Questions
+### How do I invalidate a JWT before it expires?
+
+Since JWTs are stateless, instant revocation requires either maintaining a distributed Redis token blacklist or rotating user token version counters.
+

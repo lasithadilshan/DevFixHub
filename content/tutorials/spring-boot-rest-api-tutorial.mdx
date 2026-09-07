@@ -1,0 +1,125 @@
+---
+title: "Spring Boot REST API Tutorial"
+description: "Build a production-grade, secure REST API with Spring Boot 3, Java 21, and Spring Data JPA from scratch."
+slug: "spring-boot-rest-api-tutorial"
+category: "Spring Boot"
+tags: ["spring-boot","java","rest-api","backend"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "10 min"
+difficulty: "Beginner"
+---
+
+# Spring Boot REST API Tutorial
+
+Build a production-grade, secure REST API with Spring Boot 3, Java 21, and Spring Data JPA from scratch.
+
+## Prerequisites
+- Java Development Kit (JDK 17 or 21) installed
+- Basic understanding of object-oriented Java programming
+- Maven or Gradle installed
+
+## 1. Project Initialization
+
+Generate a new Spring Boot project via start.spring.io with dependencies: Spring Web, Spring Data JPA, and H2 Database.
+
+```xml
+// pom.xml dependencies
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>
+```
+
+## 2. Creating the Domain Entity
+
+Define a clean JPA entity with auto-generated ID, validation constraints, and getters/setters.
+
+```java
+@Entity
+@Table(name = "articles")
+public class Article {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    public Article() {}
+    public Article(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+    // Getters and Setters
+}
+```
+
+## 3. Spring Data JPA Repository
+
+Extend JpaRepository to automatically inherit full CRUD operations without writing raw SQL.
+
+```java
+@Repository
+public interface ArticleRepository extends JpaRepository<Article, Long> {
+    List<Article> findByTitleContainingIgnoreCase(String keyword);
+}
+```
+
+## 4. Building the REST Controller
+
+Expose standard RESTful endpoints (@GetMapping, @PostMapping, @PutMapping, @DeleteMapping) returning ResponseEntity.
+
+```java
+@RestController
+@RequestMapping("/api/v1/articles")
+public class ArticleController {
+    private final ArticleRepository repository;
+
+    public ArticleController(ArticleRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Article>> getAll() {
+        return ResponseEntity.ok(repository.findAll());
+    }
+
+    @PostMapping
+    public ResponseEntity<Article> create(@RequestBody Article article) {
+        Article saved = repository.save(article);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+}
+```
+
+
+## Best Practices
+- Always use constructor injection rather than @Autowired field injection.
+- Wrap responses in ResponseEntity with appropriate HTTP status codes (201 Created, 204 No Content).
+- Use DTOs (Data Transfer Objects) instead of exposing database entities directly to API consumers.
+
+## Common Mistakes
+- Returning null from controller methods instead of throwing a NotFoundException.
+- Mutating entities in-place without transaction boundaries.
+
+## Frequently Asked Questions
+### How do I test these endpoints from the terminal?
+
+Run curl -X GET http://localhost:8080/api/v1/articles or import the endpoints into Postman.
+

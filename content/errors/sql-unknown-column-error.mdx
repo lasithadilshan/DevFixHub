@@ -1,0 +1,73 @@
+---
+title: "SQL Unknown Column Error: Unknown column 'xyz' in 'field list'"
+description: "Fix Unknown column in field list or column does not exist errors in MySQL, PostgreSQL, and ORMs."
+slug: "sql-unknown-column-error"
+category: "SQL"
+tags: ["sql","database","mysql","postgresql"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "ERROR 1054 (42S22): Unknown column 'is_active' in 'field list'"
+---
+
+# SQL Unknown Column Error: Unknown column 'xyz' in 'field list'
+
+Fix Unknown column in field list or column does not exist errors in MySQL, PostgreSQL, and ORMs.
+
+```text
+ERROR 1054 (42S22): Unknown column 'is_active' in 'field list'
+```
+
+## Problem Overview
+
+The database query references a column name that does not exist in the specified table schema.
+
+## Why Does This Happen?
+
+- Typo in column name or casing mismatch (PostgreSQL converts unquoted column names to lowercase).
+- Missing database migration that adds the new column.
+- Using double quotes instead of single quotes for string literals in MySQL.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check table column schema
+
+Inspect actual table column names directly in the database.
+
+```sql
+-- In MySQL:
+DESCRIBE users;
+
+-- In PostgreSQL:
+\d users
+```
+
+### Step 2: Step 2: Use single quotes for string values
+
+In SQL, single quotes denote values; double quotes denote column/table identifiers.
+
+```sql
+-- BAD (interprets 'active' as a column):
+SELECT * FROM users WHERE status = "active";
+
+-- GOOD:
+SELECT * FROM users WHERE status = 'active';
+```
+
+
+## Common Mistakes to Avoid
+
+- Creating camelCase columns in PostgreSQL without double quotes, which auto-converts them to lowercase.
+
+## Prevention & Best Practices
+
+- Use schema migration tools like Liquibase, Flyway, or Prisma.
+
+
+## Frequently Asked Questions
+
+### Why does PostgreSQL say 'column does not exist' for my camelCase column?
+
+In Postgres, unquoted names are folded to lowercase. If created as "userId", you must query it as "userId" with double quotes.
+

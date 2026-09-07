@@ -1,0 +1,66 @@
+---
+title: "Spring Boot with PostgreSQL Database"
+description: "Connect Spring Boot to PostgreSQL using HikariCP connection pooling, Docker, and Liquibase migrations."
+slug: "spring-boot-postgresql"
+category: "Spring Boot"
+tags: ["spring-boot","postgresql","database","sql"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "8 min"
+difficulty: "Beginner"
+---
+
+# Spring Boot with PostgreSQL Database
+
+Connect Spring Boot to PostgreSQL using HikariCP connection pooling, Docker, and Liquibase migrations.
+
+## Prerequisites
+- PostgreSQL installed locally or running via Docker
+- Spring Boot basics
+
+## 1. PostgreSQL Driver Dependency
+
+Add the org.postgresql driver to pom.xml.
+
+```xml
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+## 2. Connection Properties
+
+Configure connection strings and Hikari pool settings in application.yml.
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devfix_db
+    username: postgres
+    password: secretpassword
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+```
+
+
+## Best Practices
+- Never use ddl-auto=create-drop in production; use Flyway or Liquibase migrations instead.
+- Size Hikari connection pools appropriately based on CPU cores.
+
+## Common Mistakes
+- Leaving default ddl-auto=update in production, which can lock tables during deployments.
+
+## Frequently Asked Questions
+### How do I spin up a PostgreSQL instance quickly for local dev?
+
+Run: docker run -d --name pg -e POSTGRES_PASSWORD=secretpassword -p 5432:5432 postgres:16-alpine.
+

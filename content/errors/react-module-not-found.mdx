@@ -1,0 +1,65 @@
+---
+title: "React Module Not Found Error"
+description: "Fix 'Module not found: Can't resolve...' caused by incorrect relative file paths, missing extensions, or case-sensitivity."
+slug: "react-module-not-found"
+category: "React"
+tags: ["react","bundler","webpack","npm"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "Module not found: Error: Can't resolve './components/header' in '/src/app'"
+---
+
+# React Module Not Found Error
+
+Fix 'Module not found: Can't resolve...' caused by incorrect relative file paths, missing extensions, or case-sensitivity.
+
+```text
+Module not found: Error: Can't resolve './components/header' in '/src/app'
+```
+
+## Problem Overview
+
+The bundler (Webpack, Vite, or Turbopack) cannot locate the imported file or npm package at the specified path.
+
+## Why Does This Happen?
+
+- Case-sensitivity mismatch (e.g., Header.tsx vs header.tsx works on macOS but fails on Linux/Vercel).
+- Incorrect relative directory traversal (e.g., ../components vs ./components).
+- Missing npm package installation.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check exact file name casing
+
+Linux build servers (like Vercel and GitHub Actions) are case-sensitive.
+
+```bash
+git mv src/components/header.tsx src/components/Header.tsx
+```
+
+### Step 2: Step 2: Use path aliases (@/*)
+
+Configure paths in tsconfig.json to avoid messy relative paths like ../../../.
+
+```tsx
+import Header from '@/components/Header';
+```
+
+
+## Common Mistakes to Avoid
+
+- Renaming a file with case change only on macOS without using git mv, causing git to ignore the case change.
+
+## Prevention & Best Practices
+
+- Enable 'forceConsistentCasingInFileNames': true in tsconfig.json.
+
+
+## Frequently Asked Questions
+
+### Why did my build work locally on Mac but fail on Vercel?
+
+macOS file systems are case-insensitive by default, while Linux systems are strictly case-sensitive.
+

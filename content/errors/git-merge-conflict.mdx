@@ -1,0 +1,80 @@
+---
+title: "Git Merge Conflict: Automatic merge failed; fix conflicts and then commit"
+description: "Understand, resolve, and prevent Git merge conflicts using visual markers, merge tools, and clean branch workflows."
+slug: "git-merge-conflict"
+category: "Git"
+tags: ["git","version-control","collaboration","branching"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "CONFLICT (content): Merge conflict in src/index.ts
+Automatic merge failed; fix conflicts and then commit the result."
+---
+
+# Git Merge Conflict: Automatic merge failed; fix conflicts and then commit
+
+Understand, resolve, and prevent Git merge conflicts using visual markers, merge tools, and clean branch workflows.
+
+```text
+CONFLICT (content): Merge conflict in src/index.ts
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+## Problem Overview
+
+Git cannot automatically combine two commits because competing changes were made to the exact same lines of code in a file.
+
+## Why Does This Happen?
+
+- Two developers edited the same lines of code on different branches.
+- A file was deleted on one branch but modified on another.
+- Rebasing a long-lived feature branch against an updated main branch.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Inspect conflict markers in the file
+
+Look for <<<<<<< HEAD (your current branch), =======, and >>>>>>> branch_name (incoming branch).
+
+```typescript
+<<<<<<< HEAD
+const API_BASE = 'https://api.v1.devfixhub.com';
+=======
+const API_BASE = 'https://api.v2.devfixhub.com';
+>>>>>>> feature-branch
+```
+
+### Step 2: Step 2: Edit the file to keep the desired code and delete markers
+
+Manually reconcile the code and remove all conflict marker lines.
+
+```typescript
+const API_BASE = 'https://api.v2.devfixhub.com';
+```
+
+### Step 3: Step 3: Stage the resolved files and finish merge
+
+Stage files with git add and complete the merge commit.
+
+```bash
+git add src/index.ts
+git commit -m "Merge branch 'feature-branch' and resolve API_BASE conflict"
+```
+
+
+## Common Mistakes to Avoid
+
+- Committing files with <<<<<<< or >>>>>>> markers still inside them, causing syntax errors in production.
+
+## Prevention & Best Practices
+
+- Keep feature branches small and rebase frequently against main (git pull --rebase origin main).
+
+
+## Frequently Asked Questions
+
+### How do I abort a broken merge attempt?
+
+Run 'git merge --abort' to restore your working tree to the state before the merge started.
+

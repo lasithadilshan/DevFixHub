@@ -1,0 +1,51 @@
+---
+title: "Kubernetes Service: ClusterIP, NodePort, and LoadBalancer"
+description: "Expose pods internally and externally using ClusterIP, NodePort, and cloud LoadBalancer services."
+slug: "kubernetes-service"
+category: "Kubernetes"
+tags: ["kubernetes","networking","services","load-balancer"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "8 min"
+difficulty: "Intermediate"
+---
+
+# Kubernetes Service: ClusterIP, NodePort, and LoadBalancer
+
+Expose pods internally and externally using ClusterIP, NodePort, and cloud LoadBalancer services.
+
+## Prerequisites
+- Kubernetes Deployment tutorial
+
+## 1. ClusterIP Service Manifest
+
+Create a stable internal IP address and DNS name that load-balances traffic across matching pods.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: api
+  ports:
+    - port: 80
+      targetPort: 80
+```
+
+
+## Best Practices
+- Use ClusterIP by default for all internal backend services and database connections.
+- Use Ingress rather than creating dozens of costly individual LoadBalancers.
+
+## Common Mistakes
+- Mismatched selector labels, causing the Service to have 0 endpoints.
+
+## Frequently Asked Questions
+### How do other pods call this service inside the cluster?
+
+By using internal DNS: http://backend-service.<namespace>.svc.cluster.local or simply http://backend-service within the same namespace.
+

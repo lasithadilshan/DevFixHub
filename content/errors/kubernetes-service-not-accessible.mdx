@@ -1,0 +1,78 @@
+---
+title: "Kubernetes Service Not Accessible (Connection Refused or Timeout)"
+description: "Debug Kubernetes Service routing issues, mismatched selector labels, and targetPort configurations."
+slug: "kubernetes-service-not-accessible"
+category: "Kubernetes"
+tags: ["kubernetes","networking","services","clusterip"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "curl: (7) Failed to connect to my-service port 80: Connection refused"
+---
+
+# Kubernetes Service Not Accessible (Connection Refused or Timeout)
+
+Debug Kubernetes Service routing issues, mismatched selector labels, and targetPort configurations.
+
+```text
+curl: (7) Failed to connect to my-service port 80: Connection refused
+```
+
+## Problem Overview
+
+Client cannot reach the application via its ClusterIP or NodePort Service endpoint.
+
+## Why Does This Happen?
+
+- Mismatched selector labels between the Service and Pod template.
+- targetPort does not match the actual port the container application is listening on.
+- Pods are failing readiness probes and have been removed from the service endpoints.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check if Service has registered endpoints
+
+Verify that the service is actually routing to live pod IP addresses.
+
+```bash
+kubectl get endpoints <service-name>
+```
+
+### Step 2: Step 2: Match Service selector with Pod labels
+
+Ensure labels in service.spec.selector match pod metadata.labels exactly.
+
+```yaml
+# Deployment metadata:
+spec:
+  template:
+    metadata:
+      labels:
+        app: backend # MUST MATCH
+
+# Service definition:
+spec:
+  selector:
+    app: backend # MUST MATCH
+  ports:
+    - port: 80
+      targetPort: 8080 # Container listening port
+```
+
+
+## Common Mistakes to Avoid
+
+- Confusing port (the port the service exposes internally) with targetPort (the port your container listens on).
+
+## Prevention & Best Practices
+
+- Always inspect 'kubectl get endpoints' first whenever a service refuses connections.
+
+
+## Frequently Asked Questions
+
+### What does an empty '<none>' in endpoints mean?
+
+It means no pods currently match the Service selector labels or all matching pods are failing readiness probes.
+

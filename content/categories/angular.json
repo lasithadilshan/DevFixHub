@@ -1,0 +1,8 @@
+{
+  "id": "angular",
+  "slug": "angular",
+  "name": "Angular",
+  "description": "Resolving ExpressionChangedAfterItHasBeenCheckedError, NullInjectorError, module imports, and RxJS pipelines.",
+  "icon": "ShieldAlert",
+  "color": "from-red-500/20 to-rose-500/20 text-red-500 border-red-500/30"
+}

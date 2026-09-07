@@ -1,0 +1,71 @@
+---
+title: "npm EACCES Permission Error"
+description: "Fix npm ERR! code EACCES: permission denied when installing packages globally or modifying directories."
+slug: "npm-eacces-permission-error"
+category: "Node.js"
+tags: ["npm","permissions","linux","macos"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "npm ERR! code EACCES
+npm ERR! syscall access
+npm ERR! path /usr/local/lib/node_modules"
+---
+
+# npm EACCES Permission Error
+
+Fix npm ERR! code EACCES: permission denied when installing packages globally or modifying directories.
+
+```text
+npm ERR! code EACCES
+npm ERR! syscall access
+npm ERR! path /usr/local/lib/node_modules
+```
+
+## Problem Overview
+
+npm cannot write to the global directory or project directory because the current user lacks write permissions.
+
+## Why Does This Happen?
+
+- Installing global packages (npm install -g) into root-owned /usr/local without write access.
+- Running npm with sudo previously, creating root-owned files in ~/.npm.
+- Corrupted folder permissions in local node_modules.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Configure npm to use a directory in your user home
+
+Recommended by npm: redirect global installs to a directory owned by your user account.
+
+```bash
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+export PATH=~/.npm-global/bin:$PATH
+```
+
+### Step 2: Step 2: Fix ownership of ~/.npm cache directory
+
+Reclaim ownership of your npm cache from root.
+
+```bash
+sudo chown -R $(whoami) ~/.npm
+```
+
+
+## Common Mistakes to Avoid
+
+- Using 'sudo npm install' as a workaround, which creates security risks and perpetuates permission errors.
+
+## Prevention & Best Practices
+
+- Use Node Version Manager (nvm) or fnm; they automatically install Node and npm into user space.
+
+
+## Frequently Asked Questions
+
+### Should I ever run npm with sudo?
+
+Never. Running npm with sudo can allow malicious package install scripts to execute with root system privileges.
+

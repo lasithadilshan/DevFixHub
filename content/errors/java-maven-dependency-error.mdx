@@ -1,0 +1,66 @@
+---
+title: "Java Maven Dependency Error: Could Not Resolve Dependencies"
+description: "Fix Maven artifact resolution failures, corrupted local repository caches, and repository authentication errors."
+slug: "java-maven-dependency-error"
+category: "Java"
+tags: ["java","maven","build","dependencies"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "[ERROR] Failed to execute goal on project: Could not resolve dependencies for project"
+---
+
+# Java Maven Dependency Error: Could Not Resolve Dependencies
+
+Fix Maven artifact resolution failures, corrupted local repository caches, and repository authentication errors.
+
+```text
+[ERROR] Failed to execute goal on project: Could not resolve dependencies for project
+```
+
+## Problem Overview
+
+Maven fails during compile or package because a required artifact could not be downloaded from Maven Central or private Nexus/Artifactory repository.
+
+## Why Does This Happen?
+
+- A corrupted or interrupted download in the local ~/.m2/repository cache.
+- The artifact coordinates (groupId, artifactId, or version) have a typo.
+- Network proxy, firewall, or missing credentials in settings.xml.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Force dependency update check
+
+Run Maven with the -U flag to force re-checking remote repositories.
+
+```bash
+mvn clean install -U
+```
+
+### Step 2: Step 2: Purge corrupted local repository cache
+
+Delete the specific broken artifact directory from your ~/.m2/repository folder.
+
+```bash
+mvn dependency:purge-local-repository -DactTransitively=false -DreResolve=true
+```
+
+
+## Common Mistakes to Avoid
+
+- Deleting the entire ~/.m2 directory when only one specific library cache was corrupted.
+- Missing <repositories> definition for snapshot or custom company libraries.
+
+## Prevention & Best Practices
+
+- Pin exact dependency versions using Maven <dependencyManagement> bill-of-materials (BOM).
+
+
+## Frequently Asked Questions
+
+### Where is the Maven settings file located?
+
+Global settings are in $M2_HOME/conf/settings.xml and user settings are in ~/.m2/settings.xml.
+

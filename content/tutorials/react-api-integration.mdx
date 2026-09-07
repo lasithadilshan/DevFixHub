@@ -1,0 +1,72 @@
+---
+title: "React API Integration Best Practices"
+description: "Fetch and synchronize REST APIs in React using fetch, TanStack React Query, loading skeletons, and error boundaries."
+slug: "react-api-integration"
+category: "React"
+tags: ["react","api","fetch","state-management"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# React API Integration Best Practices
+
+Fetch and synchronize REST APIs in React using fetch, TanStack React Query, loading skeletons, and error boundaries.
+
+## Prerequisites
+- React basics
+- Promises & async/await
+
+## 1. Fetching with Loading and Error States
+
+Manage the complete data fetching lifecycle with loading indicators and error recovery.
+
+```tsx
+export function ArticleList() {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/articles')
+      .then(res => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then(data => {
+        if (isMounted) {
+          setArticles(data);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
+
+    return () => { isMounted = false; };
+  }, []);
+
+  if (loading) return <p>Loading articles...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+  return <ul>{articles.map(a => <li key={a.id}>{a.title}</li>)}</ul>;
+}
+```
+
+
+## Best Practices
+- Use AbortController or an isMounted flag to prevent state updates on unmounted components.
+
+## Common Mistakes
+- Forgetting to check response.ok, assuming HTTP 404 or 500 will reject the fetch promise automatically.
+
+## Frequently Asked Questions
+### Does fetch() throw an error on 404 Not Found?
+
+No! fetch() only rejects on network disconnection or DNS failure. You must manually check if (!response.ok).
+

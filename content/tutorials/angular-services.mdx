@@ -1,0 +1,58 @@
+---
+title: "Angular Services and Dependency Injection"
+description: "Design reusable singleton and transient services in Angular using Injectable, Signals, and RxJS."
+slug: "angular-services"
+category: "Angular"
+tags: ["angular","services","dependency-injection","typescript"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "8 min"
+difficulty: "Beginner"
+---
+
+# Angular Services and Dependency Injection
+
+Design reusable singleton and transient services in Angular using Injectable, Signals, and RxJS.
+
+## Prerequisites
+- Angular fundamentals
+- TypeScript basics
+
+## 1. Generating and Providing a Singleton Service
+
+Use providedIn: 'root' to make the service available everywhere without module declaration.
+
+```typescript
+import { Injectable, signal } from '@angular/core';
+
+export interface ToolItem {
+  id: string;
+  name: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ToolRegistryService {
+  private toolsSignal = signal<ToolItem[]>([]);
+  public readonly tools = this.toolsSignal.asReadonly();
+
+  addTool(tool: ToolItem) {
+    this.toolsSignal.update(list => [...list, tool]);
+  }
+}
+```
+
+
+## Best Practices
+- Use Angular Signals (Angular 16+) for lightweight, synchronous reactive state in services.
+
+## Common Mistakes
+- Providing services in component providers array when a singleton is needed, creating multiple disjoint instances.
+
+## Frequently Asked Questions
+### How do I inject a service without constructor in Angular?
+
+Use the inject() function: private toolService = inject(ToolRegistryService);
+

@@ -1,0 +1,87 @@
+---
+title: "Spring Boot Port 8080 Already in Use"
+description: "Fix WebServerException: Port 8080 was already in use by killing the conflicting process or assigning a custom port."
+slug: "spring-boot-port-8080-already-in-use"
+category: "Spring Boot"
+tags: ["spring-boot","port-conflict","networking","tomcat"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "org.springframework.boot.web.server.PortInUseException: Port 8080 was already in use"
+---
+
+# Spring Boot Port 8080 Already in Use
+
+Fix WebServerException: Port 8080 was already in use by killing the conflicting process or assigning a custom port.
+
+```text
+org.springframework.boot.web.server.PortInUseException: Port 8080 was already in use
+```
+
+## Problem Overview
+
+When launching a Spring Boot application, Embedded Tomcat fails to start because port 8080 is already bound by another background application, a previously unclosed JVM instance, or Docker container.
+
+## Why Does This Happen?
+
+- A previous instance of the Spring Boot application is still running in the background.
+- Another local server (Jenkins, Tomcat, Oracle XE, or Docker) is bound to port 8080.
+- The IDE crashed without terminating the spawned Java child process.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Identify the process listening on port 8080
+
+Run the terminal command to find the Process Identifier (PID) using port 8080.
+
+```bash
+lsof -i :8080
+# On Windows: netstat -ano | findstr :8080
+```
+
+### Step 2: Step 2: Terminate the blocking process
+
+Kill the process using its PID (replace 12345 with the actual PID from step 1).
+
+```bash
+kill -9 12345
+# On Windows: taskkill /PID 12345 /F
+```
+
+### Step 3: Step 3: Change the server port in application properties
+
+If port 8080 is reserved by a permanent system service, configure Spring Boot to use another port.
+
+```properties
+# application.properties
+server.port=8081
+
+# Or application.yml
+server:
+  port: 8081
+```
+
+
+## Common Mistakes to Avoid
+
+- Restarting the IDE without checking if the orphaned background Java process is still active.
+- Changing the port in application.properties but forgetting that environment variable SERVER_PORT overrides it.
+- Forgetting that Docker host port mapping (-p 8080:8080) reserves the host port.
+
+## Prevention & Best Practices
+
+- Always configure graceful shutdown hooks in Spring Boot.
+- Use docker-compose port variables rather than hardcoding port 8080 across multiple microservices.
+
+
+## Frequently Asked Questions
+
+### Why does Spring Boot default to port 8080?
+
+Port 8080 is the standard alternate HTTP port established by Apache Tomcat and the Java Servlet Specification.
+
+### How do I check what port Spring Boot picked when server.port=0?
+
+Inject ServletWebServerApplicationContext and call getWebServer().getPort(), or watch the console logs for 'Tomcat started on port(s): XXXXX'.
+

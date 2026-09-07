@@ -1,0 +1,73 @@
+---
+title: "npm Dependency Conflict: ERESOLVE unable to resolve dependency tree"
+description: "Troubleshoot npm peer dependency conflicts, conflicting version constraints, and package-lock issues."
+slug: "npm-dependency-conflict"
+category: "Node.js"
+tags: ["npm","dependencies","build","javascript"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree"
+---
+
+# npm Dependency Conflict: ERESOLVE unable to resolve dependency tree
+
+Troubleshoot npm peer dependency conflicts, conflicting version constraints, and package-lock issues.
+
+```text
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+```
+
+## Problem Overview
+
+Two packages in your dependency tree require incompatible peer dependency versions of the same library (e.g. React 18 vs React 19).
+
+## Why Does This Happen?
+
+- Upgraded a root package while third-party plugins still specify an older peerDependency range.
+- npm v7+ strict peer dependency enforcement algorithm.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Run with --legacy-peer-deps
+
+Bypass strict peer dependency locking if the package functions properly.
+
+```bash
+npm install --legacy-peer-deps
+```
+
+### Step 2: Step 2: Use npm overrides in package.json
+
+Force all child dependencies to accept a specific unified version of the conflicting package.
+
+```json
+{
+  "dependencies": {
+    "react": "^19.0.0"
+  },
+  "overrides": {
+    "react": "^19.0.0"
+  }
+}
+```
+
+
+## Common Mistakes to Avoid
+
+- Deleting package-lock.json and running npm install, which can pull breaking minor/patch updates across all dependencies.
+
+## Prevention & Best Practices
+
+- Audit outdated packages regularly using 'npm outdated'.
+
+
+## Frequently Asked Questions
+
+### What is the difference between dependencies and peerDependencies?
+
+dependencies are installed privately inside a library. peerDependencies require the consumer application to provide the shared dependency instance.
+

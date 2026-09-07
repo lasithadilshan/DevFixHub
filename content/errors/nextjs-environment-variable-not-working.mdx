@@ -1,0 +1,71 @@
+---
+title: "Next.js Environment Variable Not Working"
+description: "Fix undefined process.env variables in client-side Next.js components by properly prefixing with NEXT_PUBLIC_."
+slug: "nextjs-environment-variable-not-working"
+category: "React"
+tags: ["nextjs","environment-variables","security","config"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "process.env.API_URL is undefined on the client"
+---
+
+# Next.js Environment Variable Not Working
+
+Fix undefined process.env variables in client-side Next.js components by properly prefixing with NEXT_PUBLIC_.
+
+```text
+process.env.API_URL is undefined on the client
+```
+
+## Problem Overview
+
+An environment variable defined in .env.local works in server components or API routes, but evaluates to undefined in browser client components.
+
+## Why Does This Happen?
+
+- Client-side variables must be prefixed with NEXT_PUBLIC_ for security reasons.
+- Dynamic variable lookups like process.env[dynamicKey] cannot be inlined by the Next.js compiler.
+- The Next.js dev server was not restarted after updating the .env file.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Add NEXT_PUBLIC_ prefix for client access
+
+Prefix any variable meant for browser usage with NEXT_PUBLIC_.
+
+```properties
+# .env.local
+NEXT_PUBLIC_SITE_URL=https://devfixhub.com
+API_SECRET_KEY=my-super-secret-key # Keep without prefix (Server only)
+```
+
+### Step 2: Step 2: Access statically without destructuring
+
+Always reference variables explicitly as process.env.NEXT_PUBLIC_VARIABLE.
+
+```tsx
+// GOOD:
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+// BAD (Compiler cannot inline this):
+const { NEXT_PUBLIC_SITE_URL } = process.env;
+```
+
+
+## Common Mistakes to Avoid
+
+- Exposing database passwords or private API keys with NEXT_PUBLIC_, which leaks them into the public browser bundle.
+
+## Prevention & Best Practices
+
+- Use .env.example with dummy values committed to Git, and keep .env.local in .gitignore.
+
+
+## Frequently Asked Questions
+
+### Do I need to rebuild Next.js when changing .env?
+
+Yes, environment variables are embedded at build time for client bundles. You must restart next dev or re-run next build.
+

@@ -1,0 +1,73 @@
+---
+title: "Node.js Cannot Find Module (Error: MODULE_NOT_FOUND)"
+description: "Troubleshoot Error: Cannot find module '...' in Node.js applications and ES modules."
+slug: "nodejs-cannot-find-module"
+category: "Node.js"
+tags: ["nodejs","npm","commonjs","esm"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "Error: Cannot find module 'express'
+Require stack:
+- /app/server.js"
+---
+
+# Node.js Cannot Find Module (Error: MODULE_NOT_FOUND)
+
+Troubleshoot Error: Cannot find module '...' in Node.js applications and ES modules.
+
+```text
+Error: Cannot find module 'express'
+Require stack:
+- /app/server.js
+```
+
+## Problem Overview
+
+Node.js runtime cannot find the requested package in node_modules or cannot resolve the specified file path.
+
+## Why Does This Happen?
+
+- Forgot to run npm install after cloning or switching git branches.
+- CommonJS vs ES Module extension mismatch (missing .js extension in ESM import).
+- File name casing mismatch between local dev and production server.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Run clean npm install
+
+Ensure all dependencies in package.json are downloaded.
+
+```bash
+npm install
+```
+
+### Step 2: Step 2: Add .js extension for native ES Modules
+
+If your package.json has 'type': 'module', native Node.js requires explicit file extensions.
+
+```javascript
+// BAD in Node ESM:
+import { helper } from './utils';
+
+// GOOD:
+import { helper } from './utils.js';
+```
+
+
+## Common Mistakes to Avoid
+
+- Assuming node_modules resolves globally when dependencies were installed locally.
+
+## Prevention & Best Practices
+
+- Always commit package-lock.json to ensure deterministic installs.
+
+
+## Frequently Asked Questions
+
+### Why does Node.js ESM require file extensions while Webpack doesn't?
+
+Node.js follows the Web/URL spec for ESM resolution to avoid costly filesystem probing on every import.
+

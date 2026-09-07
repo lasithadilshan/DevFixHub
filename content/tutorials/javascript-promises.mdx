@@ -1,0 +1,50 @@
+---
+title: "JavaScript Promises from Scratch"
+description: "Deep dive into Promise states (pending, fulfilled, rejected), chaining, and combinators (all, race, any, allSettled)."
+slug: "javascript-promises"
+category: "JavaScript"
+tags: ["javascript","promises","concurrency","frontend"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "8 min"
+difficulty: "Intermediate"
+---
+
+# JavaScript Promises from Scratch
+
+Deep dive into Promise states (pending, fulfilled, rejected), chaining, and combinators (all, race, any, allSettled).
+
+## Prerequisites
+- JavaScript fundamentals
+
+## 1. Creating a Custom Promise
+
+Understand how the resolve and reject executor functions control Promise state transitions.
+
+```javascript
+function delay(ms) {
+  return new Promise((resolve, reject) => {
+    if (ms < 0) {
+      reject(new Error("Delay cannot be negative"));
+    } else {
+      setTimeout(resolve, ms);
+    }
+  });
+}
+
+delay(1000).then(() => console.log("1 second passed!"));
+```
+
+
+## Best Practices
+- Always return values inside .then() handlers to keep the promise chain active.
+
+## Common Mistakes
+- The 'Promise constructor anti-pattern': wrapping an existing promise in another new Promise.
+
+## Frequently Asked Questions
+### What happens if a promise rejection is not caught?
+
+The browser or Node.js runtime triggers an unhandledrejection event, which can terminate Node.js processes.
+

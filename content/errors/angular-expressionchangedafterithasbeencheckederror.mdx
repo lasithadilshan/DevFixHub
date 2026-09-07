@@ -1,0 +1,90 @@
+---
+title: "Angular ExpressionChangedAfterItHasBeenCheckedError"
+description: "Resolve NG0100: Expression has changed after it was checked in Angular change detection lifecycle."
+slug: "angular-expressionchangedafterithasbeencheckederror"
+category: "Angular"
+tags: ["angular","change-detection","lifecycle","rxjs"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "NG0100: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'false'. Current value: 'true'."
+---
+
+# Angular ExpressionChangedAfterItHasBeenCheckedError
+
+Resolve NG0100: Expression has changed after it was checked in Angular change detection lifecycle.
+
+```text
+NG0100: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'false'. Current value: 'true'.
+```
+
+## Problem Overview
+
+Angular's development mode performs a second change detection pass to ensure data stability, and detected that a component property mutated after the template was rendered.
+
+## Why Does This Happen?
+
+- Mutating bound component properties inside ngAfterViewInit() or ngAfterViewChecked().
+- Synchronous EventEmitter emit within child component lifecycle hooks.
+- Modifying shared service state during view rendering.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Move mutations to ngOnInit()
+
+Initialize state earlier in the component lifecycle before view rendering begins.
+
+```typescript
+// BAD:
+ngAfterViewInit() {
+  this.isLoading = false;
+}
+
+// GOOD:
+ngOnInit() {
+  this.isLoading = false;
+}
+```
+
+### Step 2: Step 2: Use ChangeDetectorRef.detectChanges()
+
+Manually inform Angular to re-evaluate the view if an update is unavoidably deferred.
+
+```typescript
+constructor(private cdr: ChangeDetectorRef) {}
+
+ngAfterViewInit() {
+  this.title = 'Updated Title';
+  this.cdr.detectChanges();
+}
+```
+
+### Step 3: Step 3: Defer update with Promise.resolve() or setTimeout
+
+Queue the state mutation to the next JavaScript event loop macrotask.
+
+```typescript
+ngAfterViewInit() {
+  Promise.resolve().then(() => {
+    this.isLoading = false;
+  });
+}
+```
+
+
+## Common Mistakes to Avoid
+
+- Relying on setTimeout everywhere instead of structuring component data flow with RxJS signals or OnPush change detection.
+
+## Prevention & Best Practices
+
+- Use ChangeDetectionStrategy.OnPush and Angular Signals (Angular 16+) for predictable unidirectional data flow.
+
+
+## Frequently Asked Questions
+
+### Why does this error only appear in development mode?
+
+Angular runs change detection twice in dev mode specifically to catch unintended side effects. In production, the second check is disabled.
+

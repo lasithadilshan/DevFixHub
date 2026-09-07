@@ -1,0 +1,8 @@
+{
+  "id": "javascript",
+  "slug": "javascript",
+  "name": "JavaScript",
+  "description": "Async/await gotchas, promise rejections, type coercion errors, and modern ES syntax deep dives.",
+  "icon": "FileCode",
+  "color": "from-yellow-500/20 to-amber-500/20 text-yellow-500 border-yellow-500/30"
+}

@@ -1,0 +1,72 @@
+---
+title: "Python KeyError in Dictionary Access"
+description: "Handle KeyError exceptions safely using dict.get(), setdefault(), or collections.defaultdict."
+slug: "python-keyerror"
+category: "Python"
+tags: ["python","dictionaries","data-structures","exceptions"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "KeyError: 'email'"
+---
+
+# Python KeyError in Dictionary Access
+
+Handle KeyError exceptions safely using dict.get(), setdefault(), or collections.defaultdict.
+
+```text
+KeyError: 'email'
+```
+
+## Problem Overview
+
+The program attempts to access a dictionary key using square brackets (data['email']) that does not exist in the dictionary.
+
+## Why Does This Happen?
+
+- Accessing optional fields from API JSON payloads without verifying key existence.
+- Typo in key string name or casing mismatch.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Use dict.get() with default fallback
+
+get() returns None or your custom default rather than raising KeyError.
+
+```python
+# BAD:
+email = user['email'] # Raises KeyError if missing
+
+# GOOD:
+email = user.get('email', 'not-provided@domain.com')
+```
+
+### Step 2: Step 2: Use collections.defaultdict
+
+Automatically initialize missing keys with a default factory.
+
+```python
+from collections import defaultdict
+
+counts = defaultdict(int)
+for word in words:
+    counts[word] += 1 # Never raises KeyError
+```
+
+
+## Common Mistakes to Avoid
+
+- Using try/except KeyError for routine control flow instead of using .get().
+
+## Prevention & Best Practices
+
+- Use Pydantic models for incoming JSON payloads to ensure schema validation.
+
+
+## Frequently Asked Questions
+
+### What is the difference between dict[key] and dict.get(key)?
+
+dict[key] throws a KeyError if the key is absent. dict.get(key) returns None (or an optional fallback value) safely.
+

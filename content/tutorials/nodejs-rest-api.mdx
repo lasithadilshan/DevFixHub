@@ -1,0 +1,56 @@
+---
+title: "Node.js REST API with Express"
+description: "Build a production-ready REST API from scratch with Node.js, Express, Helmet, Morgan, and error middleware."
+slug: "nodejs-rest-api"
+category: "Node.js"
+tags: ["nodejs","express","api","backend"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Beginner"
+---
+
+# Node.js REST API with Express
+
+Build a production-ready REST API from scratch with Node.js, Express, Helmet, Morgan, and error middleware.
+
+## Prerequisites
+- Node.js and npm installed
+
+## 1. Express Server Setup with Security Headers
+
+Protect endpoints with Helmet, enable CORS, and parse JSON bodies.
+
+```javascript
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+
+const app = express();
+
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'UP', timestamp: new Date().toISOString() });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+```
+
+
+## Best Practices
+- Always install helmet to automatically set critical security headers (XSS, CSP, frameguards).
+- Use environment variables (dotenv) for secrets and port numbers.
+
+## Common Mistakes
+- Omitting express.json() middleware, causing req.body to be undefined.
+
+## Frequently Asked Questions
+### How do I handle centralized errors in Express?
+
+Define a 4-argument middleware at the end of your pipeline: app.use((err, req, res, next) => res.status(500).json({ error: err.message })).
+

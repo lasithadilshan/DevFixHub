@@ -1,0 +1,70 @@
+---
+title: "Kubernetes ConfigMap Not Found"
+description: "Fix CreateContainerConfigError and Pod pending caused by missing or misspelled ConfigMaps."
+slug: "kubernetes-configmap-not-found"
+category: "Kubernetes"
+tags: ["kubernetes","configmaps","configuration","devops"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "Warning FailedMount: configmap 'app-config' not found
+Status: CreateContainerConfigError"
+---
+
+# Kubernetes ConfigMap Not Found
+
+Fix CreateContainerConfigError and Pod pending caused by missing or misspelled ConfigMaps.
+
+```text
+Warning FailedMount: configmap 'app-config' not found
+Status: CreateContainerConfigError
+```
+
+## Problem Overview
+
+The pod cannot start because a referenced ConfigMap does not exist in the pod's namespace.
+
+## Why Does This Happen?
+
+- The ConfigMap was created in a different namespace.
+- Typo in the ConfigMap name inside deployment.yaml.
+- Deployment created before the ConfigMap manifest was applied.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check existing ConfigMaps in namespace
+
+List all ConfigMaps in the target namespace.
+
+```bash
+kubectl get configmaps -n <namespace>
+```
+
+### Step 2: Step 2: Mark configMapRef as optional if appropriate
+
+Allow the pod to start even if the ConfigMap is absent.
+
+```yaml
+envFrom:
+  - configMapRef:
+      name: app-config
+      optional: true
+```
+
+
+## Common Mistakes to Avoid
+
+- Assuming kubectl apply applies files in dependency order; always ensure ConfigMaps are applied before Deployments.
+
+## Prevention & Best Practices
+
+- Use Kustomize or Helm to manage configuration and deployment manifests as single atomic units.
+
+
+## Frequently Asked Questions
+
+### Does updating a ConfigMap automatically restart pods?
+
+No. Environment variables from ConfigMaps are only injected at container creation. To reload, trigger a rollout: kubectl rollout restart deployment <name>.
+

@@ -1,0 +1,66 @@
+---
+title: "Docker Permission Denied: connect to docker daemon socket"
+description: "Fix 'Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock'."
+slug: "docker-permission-denied"
+category: "Docker"
+tags: ["docker","linux","permissions","security"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock"
+---
+
+# Docker Permission Denied: connect to docker daemon socket
+
+Fix 'Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock'.
+
+```text
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
+```
+
+## Problem Overview
+
+Non-root Linux users cannot execute docker commands because /var/run/docker.sock is owned by root and the docker group.
+
+## Why Does This Happen?
+
+- The active Linux user account has not been added to the 'docker' user group.
+- The user group membership has not been reloaded in the current terminal session.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Add current user to the docker group
+
+Grant your non-root user permission to communicate with the Docker daemon.
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+### Step 2: Step 2: Apply the new group membership
+
+Reload your shell group session without rebooting.
+
+```bash
+newgrp docker
+# Verify with:
+docker ps
+```
+
+
+## Common Mistakes to Avoid
+
+- Prefixing all docker commands with 'sudo', which creates root-owned container bind mount files.
+
+## Prevention & Best Practices
+
+- Consider Docker Rootless mode for enterprise multi-user environments.
+
+
+## Frequently Asked Questions
+
+### Do I need to log out of Linux after running usermod?
+
+Yes, group memberships update upon logging out and back in, or immediately within a subshell via 'newgrp docker'.
+

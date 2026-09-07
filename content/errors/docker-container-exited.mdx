@@ -1,0 +1,77 @@
+---
+title: "Docker Container Exited (Code 0 or 137)"
+description: "Diagnose why Docker containers exit immediately after starting, covering foreground commands and OOM kills."
+slug: "docker-container-exited"
+category: "Docker"
+tags: ["docker","containers","debugging","devops"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "Exited (0) 2 seconds ago / Exited (137) Out Of Memory"
+---
+
+# Docker Container Exited (Code 0 or 137)
+
+Diagnose why Docker containers exit immediately after starting, covering foreground commands and OOM kills.
+
+```text
+Exited (0) 2 seconds ago / Exited (137) Out Of Memory
+```
+
+## Problem Overview
+
+A Docker container starts and immediately terminates instead of running continuously as a background daemon.
+
+## Why Does This Happen?
+
+- PID 1 process terminated because the command executed in the background or completed immediately.
+- Exit code 137: The Linux kernel Out-Of-Memory (OOM) Killer terminated the container for exceeding memory limits.
+- Fatal application crash during initialization (bad database connection, missing config).
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check container logs
+
+View the standard output and error stream before termination.
+
+```bash
+docker logs <container_id_or_name>
+```
+
+### Step 2: Step 2: Keep container alive with foreground process
+
+Docker requires PID 1 to stay in the foreground. Never use daemonize flags inside Dockerfiles.
+
+```dockerfile
+# In Dockerfile - BAD:
+CMD service nginx start
+
+# GOOD:
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+### Step 3: Step 3: Increase container memory limit for Exit 137
+
+If exit code is 137, allocate more RAM to the container.
+
+```bash
+docker run -m 2g --memory-swap 2g my-image
+```
+
+
+## Common Mistakes to Avoid
+
+- Running 'docker run -d my-image bash' without '-it', which exits immediately because stdin is closed.
+
+## Prevention & Best Practices
+
+- Always configure healthchecks in your Dockerfiles and docker-compose files.
+
+
+## Frequently Asked Questions
+
+### What does Exit Code 137 mean?
+
+137 indicates the container received signal 9 (SIGKILL) from the operating system (128 + 9 = 137), typically due to an Out of Memory (OOM) event.
+

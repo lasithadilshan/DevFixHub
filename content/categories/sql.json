@@ -1,0 +1,8 @@
+{
+  "id": "sql",
+  "slug": "sql",
+  "name": "SQL",
+  "description": "Debugging SQL syntax mistakes, unknown column errors, table locking, migration conflicts, and index tuning.",
+  "icon": "Database",
+  "color": "from-teal-500/20 to-emerald-500/20 text-teal-500 border-teal-500/30"
+}

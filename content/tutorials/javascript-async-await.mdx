@@ -1,0 +1,68 @@
+---
+title: "JavaScript Async Await Masterclass"
+description: "Understand the JavaScript event loop, microtask queues, error handling with try/catch, and Promise.all."
+slug: "javascript-async-await"
+category: "JavaScript"
+tags: ["javascript","async","event-loop","es6"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "8 min"
+difficulty: "Beginner"
+---
+
+# JavaScript Async Await Masterclass
+
+Understand the JavaScript event loop, microtask queues, error handling with try/catch, and Promise.all.
+
+## Prerequisites
+- Basic JavaScript variables and functions
+
+## 1. Asynchronous Control Flow
+
+Async/await provides readable, synchronous-looking syntax on top of Promises.
+
+```javascript
+async function fetchDeveloperData(userId) {
+  try {
+    const response = await fetch(`/api/users/${userId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch:", error.message);
+    throw error;
+  }
+}
+```
+
+## 2. Running Tasks in Parallel with Promise.all
+
+Avoid waterfall requests by executing independent async operations concurrently.
+
+```javascript
+async function loadDashboard() {
+  // Runs both network requests in parallel
+  const [errors, tools] = await Promise.all([
+    fetch('/api/errors').then(r => r.json()),
+    fetch('/api/tools').then(r => r.json())
+  ]);
+  return { errors, tools };
+}
+```
+
+
+## Best Practices
+- Always wrap await calls in try/catch or handle rejections explicitly.
+- Use Promise.allSettled() when individual failures should not cancel other requests.
+
+## Common Mistakes
+- Using await inside a standard forEach loop (forEach does not wait for promises; use for...of instead).
+
+## Frequently Asked Questions
+### Does async/await block the main thread?
+
+No, await pauses execution of that specific function and yields the thread back to the event loop.
+

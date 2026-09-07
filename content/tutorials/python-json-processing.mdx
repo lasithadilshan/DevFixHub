@@ -1,0 +1,49 @@
+---
+title: "Python JSON Processing: Parsing, Formatting, and Serialization"
+description: "Master Python's json module: parse strings, handle files, customize encoders, and prevent KeyErrors."
+slug: "python-json-processing"
+category: "Python"
+tags: ["python","json","data","parsing"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "7 min"
+difficulty: "Beginner"
+---
+
+# Python JSON Processing: Parsing, Formatting, and Serialization
+
+Master Python's json module: parse strings, handle files, customize encoders, and prevent KeyErrors.
+
+## Prerequisites
+- Basic Python knowledge
+
+## 1. Parsing and Serializing JSON
+
+Use json.loads for strings and json.load for file streams.
+
+```python
+import json
+
+# Parsing JSON string
+raw_json = '{"name": "DevFixHub", "active": true}'
+data = json.loads(raw_json)
+print(data["name"]) # DevFixHub
+
+# Pretty-printing to string
+formatted = json.dumps(data, indent=2)
+print(formatted)
+```
+
+
+## Best Practices
+- Use dict.get() or Pydantic to read JSON attributes defensively.
+
+## Common Mistakes
+- Confusing json.load (reads file pointer) with json.loads (reads string).
+
+## Frequently Asked Questions
+### How do I serialize Python datetime objects to JSON?
+
+Pass default=str to json.dumps: json.dumps(data, default=str).
+

@@ -1,0 +1,60 @@
+---
+title: "Python TypeError: object is not subscriptable"
+description: "Fix 'TypeError: 'NoneType' object is not subscriptable' and argument type errors in Python."
+slug: "python-typeerror"
+category: "Python"
+tags: ["python","types","typeerror","debugging"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "TypeError: 'NoneType' object is not subscriptable"
+---
+
+# Python TypeError: object is not subscriptable
+
+Fix 'TypeError: 'NoneType' object is not subscriptable' and argument type errors in Python.
+
+```text
+TypeError: 'NoneType' object is not subscriptable
+```
+
+## Problem Overview
+
+The program uses indexing or key access (obj[0] or obj['key']) on an object that does not support indexing, most commonly None.
+
+## Why Does This Happen?
+
+- A function that returns None by default (e.g. missing return statement) was assigned to a variable.
+- A database query returned None because no matching record was found.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Verify object is not None before subscripting
+
+Add an explicit check before accessing indices.
+
+```python
+result = find_user(42)
+if result is not None:
+    print(result['username'])
+else:
+    print('User not found')
+```
+
+
+## Common Mistakes to Avoid
+
+- Calling list.sort() and expecting it to return a new list. list.sort() sorts in-place and returns None!
+
+## Prevention & Best Practices
+
+- Run Mypy static type checking across your Python project.
+
+
+## Frequently Asked Questions
+
+### Why did list.append() make my variable None?
+
+list.append() modifies the list in-place and returns None. If you do x = my_list.append(1), x will be None.
+

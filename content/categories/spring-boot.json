@@ -1,0 +1,8 @@
+{
+  "id": "spring-boot",
+  "slug": "spring-boot",
+  "name": "Spring Boot",
+  "description": "Solutions for Spring context failures, port conflicts, DataSource configuration, and REST annotations.",
+  "icon": "Leaf",
+  "color": "from-emerald-500/20 to-green-500/20 text-emerald-500 border-emerald-500/30"
+}

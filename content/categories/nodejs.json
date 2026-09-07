@@ -1,0 +1,8 @@
+{
+  "id": "nodejs",
+  "slug": "nodejs",
+  "name": "Node.js",
+  "description": "Fixing EADDRINUSE port errors, npm permission crashes, circular dependencies, and event loop delays.",
+  "icon": "Server",
+  "color": "from-lime-500/20 to-emerald-500/20 text-lime-500 border-lime-500/30"
+}

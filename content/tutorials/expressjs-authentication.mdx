@@ -1,0 +1,49 @@
+---
+title: "Express.js Authentication with JWT & Bcrypt"
+description: "Implement secure password hashing with bcrypt, JWT token issuance, and protected route middleware."
+slug: "expressjs-authentication"
+category: "Node.js"
+tags: ["express","jwt","bcrypt","auth"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "10 min"
+difficulty: "Intermediate"
+---
+
+# Express.js Authentication with JWT & Bcrypt
+
+Implement secure password hashing with bcrypt, JWT token issuance, and protected route middleware.
+
+## Prerequisites
+- Basic Express knowledge
+
+## 1. Password Hashing with Bcrypt
+
+Always hash passwords with a salt cost factor of 10 or 12 before storing.
+
+```javascript
+const bcrypt = require('bcryptjs');
+
+async function hashPassword(plainText) {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(plainText, salt);
+}
+
+async function verifyPassword(plainText, hash) {
+  return bcrypt.compare(plainText, hash);
+}
+```
+
+
+## Best Practices
+- Never log raw passwords or plain tokens to stdout or application logs.
+
+## Common Mistakes
+- Using MD5 or SHA256 without salt to store user passwords.
+
+## Frequently Asked Questions
+### Why is bcrypt preferred over raw SHA256 for passwords?
+
+Bcrypt is intentionally slow and CPU-intensive with a configurable work factor, making brute-force cracking mathematically infeasible.
+

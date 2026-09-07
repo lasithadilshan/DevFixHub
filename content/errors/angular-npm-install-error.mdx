@@ -1,0 +1,64 @@
+---
+title: "Angular npm install Error: ERESOLVE unable to resolve dependency tree"
+description: "Fix peer dependency version mismatches when installing Angular packages with npm."
+slug: "angular-npm-install-error"
+category: "Angular"
+tags: ["angular","npm","dependencies","build"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "npm ERR! ERESOLVE unable to resolve dependency tree"
+---
+
+# Angular npm install Error: ERESOLVE unable to resolve dependency tree
+
+Fix peer dependency version mismatches when installing Angular packages with npm.
+
+```text
+npm ERR! ERESOLVE unable to resolve dependency tree
+```
+
+## Problem Overview
+
+npm install fails because an external Angular library expects an older major version of @angular/core than what is currently installed.
+
+## Why Does This Happen?
+
+- The third-party library has not yet published updates for the latest Angular major version.
+- Strict peer dependency enforcement introduced in npm v7+.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Install with --legacy-peer-deps
+
+Bypass strict peer dependency resolution if the library is known to work.
+
+```bash
+npm install --legacy-peer-deps
+```
+
+### Step 2: Step 2: Update Angular dependencies using ng update
+
+Use Angular CLI's official migration tool to upgrade packages together.
+
+```bash
+ng update @angular/core @angular/cli
+```
+
+
+## Common Mistakes to Avoid
+
+- Using --force instead of --legacy-peer-deps, which can introduce corrupted dependency trees.
+
+## Prevention & Best Practices
+
+- Check Angular compatibility matrices on npm before installing community UI packages.
+
+
+## Frequently Asked Questions
+
+### What does --legacy-peer-deps actually do?
+
+It restores npm v4-v6 behavior, ignoring peer dependencies when installing packages.
+

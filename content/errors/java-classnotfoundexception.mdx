@@ -1,0 +1,71 @@
+---
+title: "Java ClassNotFoundException"
+description: "Diagnose java.lang.ClassNotFoundException and NoClassDefFoundError across classpaths, Maven, and runtime loaders."
+slug: "java-classnotfoundexception"
+category: "Java"
+tags: ["java","jvm","classpath","maven"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "java.lang.ClassNotFoundException: org.postgresql.Driver"
+---
+
+# Java ClassNotFoundException
+
+Diagnose java.lang.ClassNotFoundException and NoClassDefFoundError across classpaths, Maven, and runtime loaders.
+
+```text
+java.lang.ClassNotFoundException: org.postgresql.Driver
+```
+
+## Problem Overview
+
+The Java Virtual Machine attempts to dynamically load a class (via Class.forName or ClassLoader) but the compiled .class bytecode does not exist on the classpath.
+
+## Why Does This Happen?
+
+- A required third-party JAR is missing from the runtime classpath.
+- Maven dependency scope was set to 'provided' or 'test' instead of 'runtime' or 'compile'.
+- Typo in the fully qualified class name string.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check Maven dependency declaration
+
+Ensure the artifact is properly declared in pom.xml without restrictive scopes.
+
+```xml
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.7.2</version>
+    <scope>runtime</scope>
+</dependency>
+```
+
+### Step 2: Step 2: Refresh and package dependencies
+
+Re-download dependencies and verify package inclusion.
+
+```bash
+mvn clean package -DskipTests
+```
+
+
+## Common Mistakes to Avoid
+
+- Assuming a class available during compile time in your IDE is automatically bundled into the production fat JAR.
+- Confusing ClassNotFoundException (dynamic load failure) with NoClassDefFoundError (class was present during compilation but missing at runtime).
+
+## Prevention & Best Practices
+
+- Use the maven-dependency-plugin (mvn dependency:tree) to inspect resolved jars.
+
+
+## Frequently Asked Questions
+
+### What is the difference between ClassNotFoundException and NoClassDefFoundError?
+
+ClassNotFoundException is an Exception thrown when dynamically loading a class with reflection. NoClassDefFoundError is a fatal LinkageError when a statically compiled dependency is missing at runtime.
+

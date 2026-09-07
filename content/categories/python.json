@@ -1,0 +1,8 @@
+{
+  "id": "python",
+  "slug": "python",
+  "name": "Python",
+  "description": "Diagnosing ModuleNotFoundError, KeyError, IndentationError, typing discrepancies, and virtual environments.",
+  "icon": "Terminal",
+  "color": "from-blue-500/20 to-indigo-500/20 text-blue-500 border-blue-500/30"
+}

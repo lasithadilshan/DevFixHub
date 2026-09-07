@@ -1,0 +1,69 @@
+---
+title: "CORS Policy Error: Cross-Origin Resource Sharing"
+description: "Understand the mechanics of CORS, preflight OPTIONS requests, and how to fix CORS headers across all backend servers."
+slug: "cors-policy-error"
+category: "Web & Network"
+tags: ["cors","http","security","browsers"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "Access to fetch at 'https://api.example.com' from origin 'https://app.example.com' has been blocked by CORS policy: Response to preflight request doesn't pass access control check"
+---
+
+# CORS Policy Error: Cross-Origin Resource Sharing
+
+Understand the mechanics of CORS, preflight OPTIONS requests, and how to fix CORS headers across all backend servers.
+
+```text
+Access to fetch at 'https://api.example.com' from origin 'https://app.example.com' has been blocked by CORS policy: Response to preflight request doesn't pass access control check
+```
+
+## Problem Overview
+
+A browser security mechanism prevents a web application running at one origin from reading resources from another origin without explicit server permission.
+
+## Why Does This Happen?
+
+- The server does not send Access-Control-Allow-Origin header matching the requesting frontend origin.
+- Custom HTTP headers (Authorization, X-Custom-Header) trigger a preflight OPTIONS request that the server rejects with 404 or 403.
+- Cookie credentials enabled on client without Access-Control-Allow-Credentials: true on the server.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Return the required CORS headers on the server
+
+Configure your API server to respond with appropriate headers.
+
+```http
+Access-Control-Allow-Origin: https://app.example.com
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Allow-Credentials: true
+```
+
+### Step 2: Step 2: Return HTTP 204 or 200 on OPTIONS preflight calls
+
+Ensure HTTP OPTIONS requests receive an immediate success status with no body.
+
+```javascript
+// Express example:
+app.options('*', cors());
+```
+
+
+## Common Mistakes to Avoid
+
+- Trying to 'disable CORS' inside frontend JavaScript. CORS is enforced by the browser; the fix MUST be configured on the server!
+
+## Prevention & Best Practices
+
+- Use reverse proxies (like Nginx, Cloudflare, or dev proxies) to serve frontend and backend from the same domain.
+
+
+## Frequently Asked Questions
+
+### Why do curl and Postman work when the browser fails with CORS?
+
+CORS is strictly a web browser security feature. Non-browser HTTP clients like curl and Postman do not enforce the Same-Origin Policy.
+

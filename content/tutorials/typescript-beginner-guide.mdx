@@ -1,0 +1,63 @@
+---
+title: "TypeScript Beginner Guide: Type Safety for Modern Web Apps"
+description: "Learn TypeScript fundamentals: interfaces, type aliases, generics, union types, and tsconfig settings."
+slug: "typescript-beginner-guide"
+category: "TypeScript"
+tags: ["typescript","javascript","types","tooling"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "10 min"
+difficulty: "Beginner"
+---
+
+# TypeScript Beginner Guide: Type Safety for Modern Web Apps
+
+Learn TypeScript fundamentals: interfaces, type aliases, generics, union types, and tsconfig settings.
+
+## Prerequisites
+- Familiarity with modern JavaScript
+
+## 1. Interfaces vs Type Aliases
+
+Define unambiguous contracts for domain models and component props.
+
+```typescript
+export interface UserProfile {
+  id: string;
+  username: string;
+  email?: string; // Optional field
+  role: 'admin' | 'editor' | 'viewer'; // Union type
+}
+
+function printRole(user: UserProfile): void {
+  console.log(`${user.username} is an ${user.role}`);
+}
+```
+
+## 2. Reusable Generic Functions
+
+Write type-safe functions that adapt to various input and output shapes.
+
+```typescript
+function firstElement<T>(arr: T[]): T | undefined {
+  return arr[0];
+}
+
+const firstNumber = firstElement([10, 20, 30]); // Type is number
+const firstString = firstElement(['a', 'b', 'c']); // Type is string
+```
+
+
+## Best Practices
+- Always enable strict: true in tsconfig.json.
+- Avoid using 'any'; use 'unknown' when the incoming type is truly indeterminate.
+
+## Common Mistakes
+- Overusing type assertions (as unknown as SpecificType) to silence compiler warnings.
+
+## Frequently Asked Questions
+### Does TypeScript add overhead to runtime performance?
+
+Zero. TypeScript is strictly compile-time; all types and interfaces are stripped during compilation into plain JavaScript.
+

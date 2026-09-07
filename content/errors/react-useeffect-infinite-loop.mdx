@@ -1,0 +1,81 @@
+---
+title: "React useEffect Infinite Loop"
+description: "Diagnose and prevent infinite re-render loops caused by missing or mutating dependencies in useEffect."
+slug: "react-useeffect-infinite-loop"
+category: "React"
+tags: ["react","hooks","infinite-loop","state"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "Error: Too many re-renders. React limits the number of renders to prevent an infinite loop."
+---
+
+# React useEffect Infinite Loop
+
+Diagnose and prevent infinite re-render loops caused by missing or mutating dependencies in useEffect.
+
+```text
+Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+```
+
+## Problem Overview
+
+A React component triggers a state update inside useEffect, which re-renders the component, which in turn triggers useEffect again in an endless cycle.
+
+## Why Does This Happen?
+
+- Updating a state variable inside useEffect that is also listed in its dependency array.
+- Passing objects, functions, or arrays created inside the component body into the dependency array without useCallback/useMemo.
+- Omitting the dependency array entirely (which causes the effect to run on every single render).
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Use functional state updates
+
+Avoid listing the updated state variable as a dependency by using the functional updater form.
+
+```tsx
+// BAD (causes loop):
+useEffect(() => {
+  setCount(count + 1);
+}, [count]);
+
+// GOOD (no count dependency needed):
+useEffect(() => {
+  setCount((prev) => prev + 1);
+}, []);
+```
+
+### Step 2: Step 2: Memoize object and function dependencies
+
+Wrap callback functions in useCallback so their object reference remains stable across renders.
+
+```tsx
+const fetchUser = useCallback(async () => {
+  const res = await fetch(`/api/users/${userId}`);
+  const data = await res.json();
+  setUser(data);
+}, [userId]);
+
+useEffect(() => {
+  fetchUser();
+}, [fetchUser]);
+```
+
+
+## Common Mistakes to Avoid
+
+- Disabling the react-hooks/exhaustive-deps eslint rule instead of fixing the unstable object reference.
+
+## Prevention & Best Practices
+
+- Keep state primitive where possible and extract static functions outside the component function.
+
+
+## Frequently Asked Questions
+
+### Why do object dependencies trigger useEffect every time?
+
+JavaScript compares objects by reference (===). In React, an object literal {} created inside a component has a new memory address on every render.
+

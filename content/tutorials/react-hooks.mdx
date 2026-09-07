@@ -1,0 +1,56 @@
+---
+title: "React Hooks Comprehensive Guide"
+description: "Master useState, useEffect, useRef, useMemo, useCallback, and building custom hooks with clean patterns."
+slug: "react-hooks"
+category: "React"
+tags: ["react","hooks","frontend","javascript"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "11 min"
+difficulty: "Beginner"
+---
+
+# React Hooks Comprehensive Guide
+
+Master useState, useEffect, useRef, useMemo, useCallback, and building custom hooks with clean patterns.
+
+## Prerequisites
+- Basic React component understanding
+
+## 1. State and Lifecycle with useState and useEffect
+
+Manage reactive component state and side effects cleanly.
+
+```tsx
+import { useState, useEffect } from 'react';
+
+export default function WindowSize() {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const handleResize = () => setSize({ width: window.innerWidth, height: window.innerHeight });
+    handleResize(); // Initial call
+    window.addEventListener('resize', handleResize);
+    
+    // Clean-up function prevents memory leaks
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array = mount once
+
+  return <div>{size.width} x {size.height}</div>;
+}
+```
+
+
+## Best Practices
+- Always return cleanup functions from useEffect when subscribing to event listeners or timers.
+- Follow the Rules of Hooks: only call hooks at the top level of function components.
+
+## Common Mistakes
+- Mutating state directly (e.g. state.push(item)) instead of providing a new array ([...state, item]).
+
+## Frequently Asked Questions
+### When should I use useMemo vs useCallback?
+
+useMemo caches the calculated return value of a function. useCallback caches the function definition itself.
+

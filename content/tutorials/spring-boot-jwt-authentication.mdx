@@ -1,0 +1,70 @@
+---
+title: "Spring Boot JWT Authentication"
+description: "Implement stateless JSON Web Token (JWT) authentication, refresh tokens, and Spring Security 6 authorization."
+slug: "spring-boot-jwt-authentication"
+category: "Spring Boot"
+tags: ["spring-boot","jwt","security","auth"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "12 min"
+difficulty: "Intermediate"
+---
+
+# Spring Boot JWT Authentication
+
+Implement stateless JSON Web Token (JWT) authentication, refresh tokens, and Spring Security 6 authorization.
+
+## Prerequisites
+- Completion of Spring Boot REST API tutorial
+- Basic knowledge of cryptography and HTTP headers
+
+## 1. Setting up Spring Security & JJWT
+
+Add Spring Boot Starter Security and the jjwt library for signing and validating JWT tokens.
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.12.5</version>
+</dependency>
+```
+
+## 2. JwtService Token Generator
+
+Create a utility to generate cryptographically signed HMAC-SHA256 tokens with expiration claims.
+
+```java
+@Service
+public class JwtService {
+    private final SecretKey key = Keys.hmacShaKeyFor("my-ultra-secret-32-byte-hex-key-devfixhub!".getBytes());
+
+    public String generateToken(String username) {
+        return Jwts.builder()
+            .subject(username)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+            .signWith(key)
+            .compact();
+    }
+}
+```
+
+
+## Best Practices
+- Keep access token lifetimes short (15-60 minutes) and use refresh tokens for rotation.
+- Store secrets in environment variables, never committed to git.
+
+## Common Mistakes
+- Using an insecure weak signing key under 256 bits (32 characters).
+
+## Frequently Asked Questions
+### Can the client decode a JWT payload?
+
+Yes, JWT payloads are Base64URL encoded, not encrypted. Never place passwords or credit cards in JWT claims.
+

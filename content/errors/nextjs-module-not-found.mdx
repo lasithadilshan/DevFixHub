@@ -1,0 +1,72 @@
+---
+title: "Next.js Module Not Found: Can't resolve in app directory"
+description: "Resolve Next.js module resolution issues, broken tsconfig paths, and relative import failures in App Router."
+slug: "nextjs-module-not-found"
+category: "React"
+tags: ["nextjs","app-router","typescript","imports"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "Module not found: Can't resolve '@/components/Navbar'"
+---
+
+# Next.js Module Not Found: Can't resolve in app directory
+
+Resolve Next.js module resolution issues, broken tsconfig paths, and relative import failures in App Router.
+
+```text
+Module not found: Can't resolve '@/components/Navbar'
+```
+
+## Problem Overview
+
+Next.js compiler fails during next dev or next build because an imported path cannot be resolved.
+
+## Why Does This Happen?
+
+- Missing or misconfigured 'paths' alias in tsconfig.json.
+- Deleted or moved file still referenced in an old import statement.
+- Stale .next build cache directory.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check tsconfig.json path mappings
+
+Ensure the '@/*' alias is mapped to the project root.
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}
+```
+
+### Step 2: Step 2: Clear .next cache and restart
+
+Remove corrupted build artifacts.
+
+```bash
+rm -rf .next && npm run dev
+```
+
+
+## Common Mistakes to Avoid
+
+- Adding paths to tsconfig.json without setting baseUrl to '.'.
+
+## Prevention & Best Practices
+
+- Always rely on consistent path aliases rather than long chains of ../.
+
+
+## Frequently Asked Questions
+
+### Can I use multiple path aliases in Next.js?
+
+Yes, you can define aliases like '@components/*': ['components/*'] in tsconfig.json.
+

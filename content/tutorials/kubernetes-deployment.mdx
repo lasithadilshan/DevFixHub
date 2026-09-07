@@ -1,0 +1,78 @@
+---
+title: "Kubernetes Deployment: Rolling Updates and Rollbacks"
+description: "Deploy scalable, zero-downtime microservices using Kubernetes Deployments, rolling updates, and rollbacks."
+slug: "kubernetes-deployment"
+category: "Kubernetes"
+tags: ["kubernetes","deployment","rolling-update","devops"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# Kubernetes Deployment: Rolling Updates and Rollbacks
+
+Deploy scalable, zero-downtime microservices using Kubernetes Deployments, rolling updates, and rollbacks.
+
+## Prerequisites
+- Kubernetes basics
+
+## 1. Writing a Declarative Deployment Manifest
+
+Define desired replica counts, container specs, resource limits, and health probes.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: server
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+```
+
+## 2. Triggering Updates and Rollbacks
+
+Update the container image and inspect rollout history.
+
+
+
+## Best Practices
+- Set maxUnavailable: 0 during rolling updates to guarantee zero downtime.
+- Always configure readiness probes to ensure traffic is only routed to fully initialized pods.
+
+## Common Mistakes
+- Using image: myapp:latest, which prevents Kubernetes from detecting that a new image version needs to be rolled out.
+
+## Frequently Asked Questions
+### How does Kubernetes roll back a failed deployment?
+
+Run 'kubectl rollout undo deployment/<name>' to revert the replica set to the previous revision.
+

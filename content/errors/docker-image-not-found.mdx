@@ -1,0 +1,65 @@
+---
+title: "Docker Image Not Found Error"
+description: "Fix 'Error response from daemon: pull access denied for xyz, repository does not exist or may require docker login'."
+slug: "docker-image-not-found"
+category: "Docker"
+tags: ["docker","docker-hub","registry","images"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "Error response from daemon: pull access denied for my-private-repo/app, repository does not exist or may require 'docker login'"
+---
+
+# Docker Image Not Found Error
+
+Fix 'Error response from daemon: pull access denied for xyz, repository does not exist or may require docker login'.
+
+```text
+Error response from daemon: pull access denied for my-private-repo/app, repository does not exist or may require 'docker login'
+```
+
+## Problem Overview
+
+Docker client cannot pull the requested image from Docker Hub or a private registry.
+
+## Why Does This Happen?
+
+- Typo in image name, namespace, or tag.
+- The image resides in a private registry and you are not authenticated.
+- The tag has been deprecated or deleted.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Authenticate with docker login
+
+Log into the registry before pulling private images.
+
+```bash
+docker login
+```
+
+### Step 2: Step 2: Verify exact tag on Docker Hub
+
+Ensure the tag exists rather than relying on default ':latest'.
+
+```bash
+docker pull node:20-alpine
+```
+
+
+## Common Mistakes to Avoid
+
+- Assuming ':latest' always exists for every image on Docker Hub.
+
+## Prevention & Best Practices
+
+- Pin explicit image digest or semantic version tags in production.
+
+
+## Frequently Asked Questions
+
+### How do I pull from a custom container registry like GitHub (GHCR)?
+
+Prefix the image with the registry host: docker pull ghcr.io/username/image:tag after running docker login ghcr.io.
+

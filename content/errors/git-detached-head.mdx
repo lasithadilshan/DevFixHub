@@ -1,0 +1,66 @@
+---
+title: "Git Detached HEAD State: You are in 'detached HEAD' state"
+description: "Understand what detached HEAD means in Git, how to save your work, and how to safely return to a branch."
+slug: "git-detached-head"
+category: "Git"
+tags: ["git","version-control","branches","head"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "You are in 'detached HEAD' state. You can look around, make experimental changes and commit them..."
+---
+
+# Git Detached HEAD State: You are in 'detached HEAD' state
+
+Understand what detached HEAD means in Git, how to save your work, and how to safely return to a branch.
+
+```text
+You are in 'detached HEAD' state. You can look around, make experimental changes and commit them...
+```
+
+## Problem Overview
+
+Git HEAD points directly to a specific commit hash rather than to a named branch pointer.
+
+## Why Does This Happen?
+
+- Checking out a specific commit hash (git checkout a1b2c3d) or a remote branch directly.
+- Checking out a Git tag.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: If you made commits in detached HEAD, save them to a new branch
+
+Create a named branch pointing to your current detached commit so work is not lost.
+
+```bash
+git switch -c my-saved-feature-branch
+```
+
+### Step 2: Step 2: If you just want to discard changes and go back to main
+
+Switch back to your primary branch cleanly.
+
+```bash
+git checkout main
+# Or with modern Git:
+git switch main
+```
+
+
+## Common Mistakes to Avoid
+
+- Switching branches without saving commits created in detached HEAD, causing them to become unreachable dangling commits.
+
+## Prevention & Best Practices
+
+- When inspecting old commits, use 'git switch -c temp-branch <commit>' instead of checking out the commit hash directly.
+
+
+## Frequently Asked Questions
+
+### Can I recover commits lost in detached HEAD?
+
+Yes! Use 'git reflog' to find the commit SHA and check it out onto a new branch.
+

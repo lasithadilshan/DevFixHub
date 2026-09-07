@@ -1,0 +1,78 @@
+---
+title: "Node.js Port Already in Use (Error: listen EADDRINUSE)"
+description: "Fix Error: listen EADDRINUSE: address already in use :::3000 in Node.js and Express servers."
+slug: "nodejs-port-already-in-use"
+category: "Node.js"
+tags: ["nodejs","express","networking","ports"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "Error: listen EADDRINUSE: address already in use :::3000"
+---
+
+# Node.js Port Already in Use (Error: listen EADDRINUSE)
+
+Fix Error: listen EADDRINUSE: address already in use :::3000 in Node.js and Express servers.
+
+```text
+Error: listen EADDRINUSE: address already in use :::3000
+```
+
+## Problem Overview
+
+A Node.js or Express HTTP server fails to bind to the requested port because another process is already listening on that port.
+
+## Why Does This Happen?
+
+- A previous node server crashed or was stopped in the background without freeing the socket.
+- Another dev server (Next.js, React, or Docker) is running on port 3000.
+- nodemon spawned multiple orphan worker processes.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Find process running on port 3000
+
+Locate the PID listening on the port.
+
+```bash
+lsof -i :3000
+# On Windows: netstat -ano | findstr :3000
+```
+
+### Step 2: Step 2: Kill the orphan process
+
+Terminate the process by PID.
+
+```bash
+kill -9 <PID>
+# Or kill all node processes:
+killall node
+# Windows: taskkill /F /IM node.exe
+```
+
+### Step 3: Step 3: Make port configurable in code
+
+Allow dynamic fallback port selection in Express.
+
+```javascript
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+```
+
+
+## Common Mistakes to Avoid
+
+- Hardcoding port 3000 instead of checking process.env.PORT.
+
+## Prevention & Best Practices
+
+- Add graceful SIGINT / SIGTERM shutdown handlers to close server sockets cleanly.
+
+
+## Frequently Asked Questions
+
+### How can I automatically find an open port in Node.js?
+
+Listen on port 0 (server.listen(0)), which instructs the OS to assign an unused ephemeral port.
+

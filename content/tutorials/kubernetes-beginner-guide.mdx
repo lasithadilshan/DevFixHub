@@ -1,0 +1,39 @@
+---
+title: "Kubernetes Beginner Guide: Architecture and Core Concepts"
+description: "Learn Kubernetes fundamentals: Control Plane, Kubelet, Pods, Deployments, ReplicaSets, and Kubectl."
+slug: "kubernetes-beginner-guide"
+category: "Kubernetes"
+tags: ["kubernetes","k8s","devops","cloud"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "11 min"
+difficulty: "Beginner"
+---
+
+# Kubernetes Beginner Guide: Architecture and Core Concepts
+
+Learn Kubernetes fundamentals: Control Plane, Kubelet, Pods, Deployments, ReplicaSets, and Kubectl.
+
+## Prerequisites
+- Docker fundamentals
+- Basic command line skills
+
+## 1. Core Architectural Overview
+
+Kubernetes orchestrates containerized workloads across a cluster of nodes. The Control Plane runs API Server, etcd, Scheduler, and Controller Manager. Worker nodes run Kubelet, Kube-Proxy, and Container Runtime.
+
+
+
+## Best Practices
+- Never create raw Pods in production; always manage them through Deployments or StatefulSets.
+- Always set namespace contexts to avoid deploying into the default namespace.
+
+## Common Mistakes
+- Treating Pods as persistent instances. Pods are ephemeral and can be destroyed or relocated at any time.
+
+## Frequently Asked Questions
+### What is a Pod in Kubernetes?
+
+A Pod is the smallest deployable computing unit in Kubernetes, consisting of one or more containers sharing storage and network namespaces.
+

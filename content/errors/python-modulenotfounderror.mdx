@@ -1,0 +1,68 @@
+---
+title: "Python ModuleNotFoundError: No module named 'xyz'"
+description: "Fix ModuleNotFoundError: No module named in Python virtual environments and scripts."
+slug: "python-modulenotfounderror"
+category: "Python"
+tags: ["python","venv","pip","modules"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "ModuleNotFoundError: No module named 'requests'"
+---
+
+# Python ModuleNotFoundError: No module named 'xyz'
+
+Fix ModuleNotFoundError: No module named in Python virtual environments and scripts.
+
+```text
+ModuleNotFoundError: No module named 'requests'
+```
+
+## Problem Overview
+
+Python interpreter cannot find the imported library in the active sys.path or site-packages directory.
+
+## Why Does This Happen?
+
+- The package was installed in a different Python version or virtual environment than the one executing the script.
+- The virtual environment is not activated in the terminal.
+- The script filename collides with the module name (e.g. naming your file requests.py).
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check active Python interpreter and install package
+
+Ensure pip is executing for the exact Python binary running your script.
+
+```bash
+python3 -m pip install requests
+```
+
+### Step 2: Step 2: Verify virtual environment activation
+
+Activate your project virtual environment before running code.
+
+```bash
+source venv/bin/activate
+# On Windows: venv\Scripts\activate
+python app.py
+```
+
+
+## Common Mistakes to Avoid
+
+- Running 'pip install' without realizing pip points to system Python 3.9 while the IDE is running Python 3.12.
+- Naming a local script email.py, math.py, or requests.py, shadowing the standard library.
+
+## Prevention & Best Practices
+
+- Always run 'python -m pip install' to guarantee packages are installed to the active interpreter.
+
+
+## Frequently Asked Questions
+
+### How do I check which Python environment is active?
+
+Run 'which python' (macOS/Linux) or 'where python' (Windows), or print sys.executable inside Python.
+

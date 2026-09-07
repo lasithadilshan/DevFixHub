@@ -1,0 +1,66 @@
+---
+title: "Kubernetes Ingress with NGINX Ingress Controller"
+description: "Route external HTTP/HTTPS traffic to multiple backend services using URL paths, subdomains, and SSL/TLS."
+slug: "kubernetes-ingress"
+category: "Kubernetes"
+tags: ["kubernetes","ingress","nginx","ssl"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Advanced"
+---
+
+# Kubernetes Ingress with NGINX Ingress Controller
+
+Route external HTTP/HTTPS traffic to multiple backend services using URL paths, subdomains, and SSL/TLS.
+
+## Prerequisites
+- Kubernetes Service tutorial
+- Basic DNS and SSL understanding
+
+## 1. Ingress Routing Definition
+
+Route requests based on hostname and URL prefixes to target ClusterIP services.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: devfixhub.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+```
+
+
+## Best Practices
+- Automate SSL/TLS certificate management using cert-manager and Let's Encrypt.
+
+## Common Mistakes
+- Forgetting to install the Ingress Controller (e.g. ingress-nginx) in the cluster; an Ingress resource does nothing without an active controller.
+
+## Frequently Asked Questions
+### What is the difference between a Service and an Ingress?
+
+A Service operates at Layer 4 (TCP/UDP IP routing). An Ingress operates at Layer 7 (HTTP/HTTPS host headers, path matching, SSL termination).
+

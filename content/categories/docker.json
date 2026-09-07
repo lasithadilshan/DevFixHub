@@ -1,0 +1,8 @@
+{
+  "id": "docker",
+  "slug": "docker",
+  "name": "Docker",
+  "description": "Remedies for container exit code 137, port binding conflicts, image cache issues, and daemon permissions.",
+  "icon": "Box",
+  "color": "from-sky-500/20 to-cyan-500/20 text-sky-500 border-sky-500/30"
+}

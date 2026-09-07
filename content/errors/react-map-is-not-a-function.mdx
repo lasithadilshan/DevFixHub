@@ -1,0 +1,92 @@
+---
+title: "React map is not a function"
+description: "Fix TypeError: data.map is not a function in React when rendering lists from API responses."
+slug: "react-map-is-not-a-function"
+category: "React"
+tags: ["react","javascript","typeerror","frontend"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "TypeError: items.map is not a function"
+---
+
+# React map is not a function
+
+Fix TypeError: data.map is not a function in React when rendering lists from API responses.
+
+```text
+TypeError: items.map is not a function
+```
+
+## Problem Overview
+
+A React component calls the .map() method on a state variable or prop that is currently undefined, null, or an object instead of an Array.
+
+## Why Does This Happen?
+
+- Initial state is undefined or null before the asynchronous API fetch completes.
+- The API response returned an object (e.g. { data: [...] }) rather than a direct array.
+- An error occurred on the backend, returning an error object { error: 'Not Found' }.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Initialize array state with empty array []
+
+Never initialize an array state to undefined or null.
+
+```tsx
+// BAD:
+const [users, setUsers] = useState();
+
+// GOOD:
+const [users, setUsers] = useState<User[]>([]);
+```
+
+### Step 2: Step 2: Guard with Array.isArray() or optional chaining
+
+Verify that the data is an array before attempting to iterate.
+
+```tsx
+return (
+  <ul>
+    {Array.isArray(users) && users.map((user) => (
+      <li key={user.id}>{user.name}</li>
+    ))}
+  </ul>
+);
+```
+
+### Step 3: Step 3: Extract nested array from API payload
+
+Ensure you are setting the array property rather than the parent wrapper object.
+
+```tsx
+useEffect(() => {
+  fetch('/api/users')
+    .then((res) => res.json())
+    .then((json) => {
+      // Check if data is nested inside json.users or json.data
+      setUsers(Array.isArray(json) ? json : json.data || []);
+    })
+    .catch(() => setUsers([]));
+}, []);
+```
+
+
+## Common Mistakes to Avoid
+
+- Assuming fetch() automatically unwraps response bodies without calling res.json().
+- Forgetting to check the Network tab in DevTools to inspect the exact structure of the API payload.
+
+## Prevention & Best Practices
+
+- Use TypeScript interfaces to enforce contract expectations between API responses and component state.
+
+
+## Frequently Asked Questions
+
+### Can I use .map() on JavaScript Objects?
+
+No, .map() is exclusively an Array prototype method. For objects, use Object.keys(obj).map() or Object.entries(obj).map().
+

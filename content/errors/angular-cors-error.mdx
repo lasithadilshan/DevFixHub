@@ -1,0 +1,85 @@
+---
+title: "Angular CORS Error on API Requests"
+description: "Solve 'Access to XMLHttpRequest has been blocked by CORS policy' in Angular using proxy.conf.json."
+slug: "angular-cors-error"
+category: "Angular"
+tags: ["angular","cors","http-client","proxy"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "Access to XMLHttpRequest at 'http://localhost:8080/api' from origin 'http://localhost:4200' has been blocked by CORS policy"
+---
+
+# Angular CORS Error on API Requests
+
+Solve 'Access to XMLHttpRequest has been blocked by CORS policy' in Angular using proxy.conf.json.
+
+```text
+Access to XMLHttpRequest at 'http://localhost:8080/api' from origin 'http://localhost:4200' has been blocked by CORS policy
+```
+
+## Problem Overview
+
+The browser blocks Angular HTTP requests because the frontend dev server (port 4200) and backend API (port 8080) have different origins.
+
+## Why Does This Happen?
+
+- Backend server has not enabled CORS headers for http://localhost:4200.
+- Browser enforces the Same-Origin Policy (SOP).
+- Directly calling backend port from frontend without a dev proxy.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Create proxy.conf.json in Angular project root
+
+Configure the Angular CLI development server to proxy /api requests to the backend.
+
+```json
+{
+  "/api": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
+```
+
+### Step 2: Step 2: Tell Angular CLI to use the proxy
+
+Add the proxyConfig option to angular.json under serve -> options.
+
+```json
+"serve": {
+  "builder": "@angular-devkit/build-angular:dev-server",
+  "options": {
+    "proxyConfig": "proxy.conf.json"
+  }
+}
+```
+
+### Step 3: Step 3: Call relative paths in Angular services
+
+Do not hardcode http://localhost:8080; use relative paths like /api/users.
+
+```typescript
+this.http.get<User[]>('/api/users');
+```
+
+
+## Common Mistakes to Avoid
+
+- Hardcoding full localhost:8080 URLs in HttpClient, which bypasses the Angular dev proxy entirely.
+
+## Prevention & Best Practices
+
+- Use environment.ts for environment-specific base URLs.
+
+
+## Frequently Asked Questions
+
+### Does proxy.conf.json work in production?
+
+No, proxy.conf.json is strictly for the local Angular development server. In production, configure Nginx, Caddy, or your backend to handle CORS.
+

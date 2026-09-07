@@ -1,0 +1,79 @@
+---
+title: "Spring Boot Unit Testing with JUnit 5 & Mockito"
+description: "Write clean, robust unit and integration tests for Spring Boot controllers and services using Mockito and MockMvc."
+slug: "spring-boot-unit-testing"
+category: "Spring Boot"
+tags: ["spring-boot","testing","junit","mockito"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# Spring Boot Unit Testing with JUnit 5 & Mockito
+
+Write clean, robust unit and integration tests for Spring Boot controllers and services using Mockito and MockMvc.
+
+## Prerequisites
+- Spring Boot basics
+- JUnit 5 fundamentals
+
+## 1. Service Unit Test with @ExtendWith(MockitoExtension.class)
+
+Test service business logic in complete isolation without loading the heavyweight Spring context.
+
+```java
+@ExtendWith(MockitoExtension.class)
+class ArticleServiceTest {
+    @Mock
+    private ArticleRepository repository;
+
+    @InjectMocks
+    private ArticleService service;
+
+    @Test
+    void shouldReturnArticleWhenFound() {
+        Article article = new Article("Test Title", "Content");
+        when(repository.findById(1L)).thenReturn(Optional.of(article));
+
+        Article result = service.getById(1L);
+        assertThat(result.getTitle()).isEqualTo("Test Title");
+    }
+}
+```
+
+## 2. Controller Web Slice Test with @WebMvcTest
+
+Test HTTP endpoints, JSON serialization, and status codes using MockMvc.
+
+```java
+@WebMvcTest(ArticleController.class)
+class ArticleControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private ArticleService service;
+
+    @Test
+    void shouldReturnOkStatus() throws Exception {
+        mockMvc.perform(get("/api/v1/articles"))
+            .andExpect(status().isOk());
+    }
+}
+```
+
+
+## Best Practices
+- Prefer pure unit tests with Mockito for fast CI feedback (< 1 second).
+- Use @WebMvcTest for controller validation and status tests instead of full @SpringBootTest.
+
+## Common Mistakes
+- Using @SpringBootTest on every test class, causing slow test suites that take 10+ minutes to execute.
+
+## Frequently Asked Questions
+### What is the difference between @Mock and @MockBean?
+
+@Mock is a pure Mockito annotation that does not involve Spring. @MockBean registers the mock directly into the Spring ApplicationContext.
+

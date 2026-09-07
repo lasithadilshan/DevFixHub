@@ -1,0 +1,84 @@
+---
+title: "Spring Boot Bean Creation Exception"
+description: "Troubleshoot BeanCreationException: Error creating bean with name and UnsatisfiedDependencyException in Spring context."
+slug: "spring-boot-bean-creation-exception"
+category: "Spring Boot"
+tags: ["spring-boot","dependency-injection","beans","ioc"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "org.springframework.beans.factory.BeanCreationException: Error creating bean with name"
+---
+
+# Spring Boot Bean Creation Exception
+
+Troubleshoot BeanCreationException: Error creating bean with name and UnsatisfiedDependencyException in Spring context.
+
+```text
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name
+```
+
+## Problem Overview
+
+The Spring ApplicationContext fails during initialization because a requested @Autowired or constructor-injected bean cannot be instantiated, has missing dependencies, or circular references.
+
+## Why Does This Happen?
+
+- Missing @Service, @Component, or @Repository annotation on an implementation class.
+- Circular dependency where Bean A requires Bean B and Bean B requires Bean A.
+- Constructor throws an unhandled exception during instantiation.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check root cause in the stack trace
+
+Scroll to the bottom of the stack trace to the 'Caused by:' line. It reveals the exact missing bean or circular dependency.
+
+```text
+Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.service.UserService' available
+```
+
+### Step 2: Step 2: Add missing component annotation
+
+Ensure the dependency class is annotated with @Service or @Component and located in the scanned package hierarchy.
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+    // Implementation
+}
+```
+
+### Step 3: Step 3: Resolve circular references with @Lazy
+
+If two services depend on each other, refactor them or inject with @Lazy.
+
+```java
+@Service
+public class OrderService {
+    private final PaymentService paymentService;
+
+    public OrderService(@Lazy PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+}
+```
+
+
+## Common Mistakes to Avoid
+
+- Placing service classes outside the root package where @SpringBootApplication is located.
+- Relying on field injection (@Autowired) rather than constructor injection, making testing difficult.
+
+## Prevention & Best Practices
+
+- Always use constructor injection; modern IDEs and Spring will detect missing beans at compile or context test time.
+
+
+## Frequently Asked Questions
+
+### Why did Spring Boot 2.6+ start failing on circular dependencies by default?
+
+Spring Boot prohibited circular dependencies by default to encourage clean domain boundaries and prevent initialization race conditions.
+

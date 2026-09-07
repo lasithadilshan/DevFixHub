@@ -1,0 +1,82 @@
+---
+title: "REST API 401 Unauthorized Error"
+description: "Fix HTTP 401 Unauthorized errors in JWT, Bearer token authentication, and expired session headers."
+slug: "rest-api-401-unauthorized-error"
+category: "Web & Network"
+tags: ["rest-api","jwt","auth","http"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer error=\"invalid_token\", error_description=\"The token expired\""
+---
+
+# REST API 401 Unauthorized Error
+
+Fix HTTP 401 Unauthorized errors in JWT, Bearer token authentication, and expired session headers.
+
+```text
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer error="invalid_token", error_description="The token expired"
+```
+
+## Problem Overview
+
+The server rejects the HTTP request because it lacks valid authentication credentials.
+
+## Why Does This Happen?
+
+- Missing or misspelled 'Authorization: Bearer <token>' header.
+- The JWT access token has expired.
+- The token was signed with an incorrect secret or corrupted in transit.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Ensure Authorization header is formatted correctly
+
+Check the exact header casing and 'Bearer ' space prefix.
+
+```javascript
+fetch('/api/profile', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+### Step 2: Step 2: Implement automatic token refresh on 401
+
+Intercept 401 responses to request a new access token using a refresh token.
+
+```javascript
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      const newToken = await refreshAccessToken();
+      error.config.headers['Authorization'] = `Bearer ${newToken}`;
+      return axios(error.config);
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+
+## Common Mistakes to Avoid
+
+- Confusing 401 Unauthorized (unauthenticated: who are you?) with 403 Forbidden (authenticated, but lacking permissions).
+
+## Prevention & Best Practices
+
+- Store refresh tokens in secure HttpOnly cookies rather than localStorage to prevent XSS theft.
+
+
+## Frequently Asked Questions
+
+### What is the difference between 401 and 403?
+
+401 Unauthorized means the request lacks valid credentials. 403 Forbidden means the identity is verified, but the user lacks permissions for that resource.
+

@@ -1,0 +1,8 @@
+{
+  "id": "ai",
+  "slug": "ai",
+  "name": "AI",
+  "description": "Building AI agents, OpenAI and Anthropic API integrations, prompt management, and streaming responses.",
+  "icon": "Sparkles",
+  "color": "from-purple-500/20 to-pink-500/20 text-purple-500 border-purple-500/30"
+}

@@ -1,0 +1,73 @@
+---
+title: "Python ImportError: cannot import name 'xyz' from partially initialized module"
+description: "Solve circular imports and circular dependencies in Python packages and modules."
+slug: "python-importerror"
+category: "Python"
+tags: ["python","circular-import","architecture","debugging"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "ImportError: cannot import name 'User' from partially initialized module 'models' (most likely due to a circular import)"
+---
+
+# Python ImportError: cannot import name 'xyz' from partially initialized module
+
+Solve circular imports and circular dependencies in Python packages and modules.
+
+```text
+ImportError: cannot import name 'User' from partially initialized module 'models' (most likely due to a circular import)
+```
+
+## Problem Overview
+
+Python encounters a circular import where module A imports from module B while module B is simultaneously attempting to import from module A before module A has finished initializing.
+
+## Why Does This Happen?
+
+- Two files import each other at the top level of the module.
+- A local file shares the same name as a third-party library or built-in module.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Move import inside the function (local import)
+
+Defer the import until runtime when both modules have completed initialization.
+
+```python
+# In models.py:
+def get_user_orders(user_id):
+    # Defer import to function execution time
+    from orders import Order
+    return Order.query.filter_by(user_id=user_id).all()
+```
+
+### Step 2: Step 2: Refactor shared dependencies into a third module
+
+Extract common models or types into a base common.py or types.py file.
+
+```python
+# shared_types.py
+class User:
+    pass
+
+class Order:
+    pass
+```
+
+
+## Common Mistakes to Avoid
+
+- Using 'from module import *', which obscures circular dependencies and pollutes the namespace.
+
+## Prevention & Best Practices
+
+- Use TYPE_CHECKING from typing module for type hints without runtime import overhead.
+
+
+## Frequently Asked Questions
+
+### How does TYPE_CHECKING avoid circular imports?
+
+Imports inside 'if TYPE_CHECKING:' are only analyzed by static type checkers (like Mypy) and are never executed at runtime.
+

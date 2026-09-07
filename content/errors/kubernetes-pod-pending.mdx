@@ -1,0 +1,71 @@
+---
+title: "Kubernetes Pod Pending: 0/N nodes available"
+description: "Resolve Pods stuck in Pending state due to insufficient CPU/memory, taints, or persistent volume binds."
+slug: "kubernetes-pod-pending"
+category: "Kubernetes"
+tags: ["kubernetes","scheduler","resources","devops"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "0/3 nodes are available: 3 Insufficient cpu, 3 Insufficient memory."
+---
+
+# Kubernetes Pod Pending: 0/N nodes available
+
+Resolve Pods stuck in Pending state due to insufficient CPU/memory, taints, or persistent volume binds.
+
+```text
+0/3 nodes are available: 3 Insufficient cpu, 3 Insufficient memory.
+```
+
+## Problem Overview
+
+The Kubernetes Scheduler (kube-scheduler) cannot assign the pod to any node in the cluster.
+
+## Why Does This Happen?
+
+- Cluster nodes lack sufficient unreserved CPU or memory requests to accommodate the pod.
+- Unmatched NodeSelector, Affinity, or Node Taints.
+- Unbound PersistentVolumeClaim (PVC) waiting for a storage volume.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check scheduler failure reasons
+
+Inspect the scheduling events in describe output.
+
+```bash
+kubectl describe pod <pod-name> | grep -A 10 Events
+```
+
+### Step 2: Step 2: Lower resource requests if over-allocated
+
+Ensure requests reflect realistic baseline requirements, not peak burst limits.
+
+```yaml
+resources:
+  requests:
+    memory: "256Mi" # Lower from excessive allocation
+    cpu: "100m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+```
+
+
+## Common Mistakes to Avoid
+
+- Setting resources.requests equal to maximum burst limits, exhausting cluster capacity.
+
+## Prevention & Best Practices
+
+- Enable cluster autoscaling (Karpenter or Cluster Autoscaler) to automatically provision nodes on demand.
+
+
+## Frequently Asked Questions
+
+### What is the difference between resource requests and limits in K8s?
+
+Requests guarantee allocation and determine scheduling. Limits define the ceiling above which containers are throttled (CPU) or killed (Memory).
+

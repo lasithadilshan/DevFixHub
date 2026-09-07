@@ -1,0 +1,84 @@
+---
+title: "Kubernetes ImagePullBackOff and ErrImagePull"
+description: "Troubleshoot ImagePullBackOff caused by invalid image tags, authentication secrets, or network timeouts."
+slug: "kubernetes-imagepullbackoff"
+category: "Kubernetes"
+tags: ["kubernetes","docker-registry","devops","pods"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "NAME READY STATUS RESTARTS AGE
+web-pod 0/1 ImagePullBackOff 0 2m"
+---
+
+# Kubernetes ImagePullBackOff and ErrImagePull
+
+Troubleshoot ImagePullBackOff caused by invalid image tags, authentication secrets, or network timeouts.
+
+```text
+NAME READY STATUS RESTARTS AGE
+web-pod 0/1 ImagePullBackOff 0 2m
+```
+
+## Problem Overview
+
+The Kubelet agent on the cluster worker node cannot download the specified container image.
+
+## Why Does This Happen?
+
+- The container image tag does not exist in the registry.
+- Private registry authentication secret (imagePullSecrets) is missing or has expired credentials.
+- Node networking or firewall blocks communication with the container registry.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Describe the pod to see the exact pull failure reason
+
+Check the Events list at the bottom of the output.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Step 2: Step 2: Create and attach an imagePullSecret
+
+Generate a docker-registry secret for private registry access.
+
+```bash
+kubectl create secret docker-registry regcred \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username=<user> \
+  --docker-password=<token> \
+  --docker-email=<email>
+```
+
+### Step 3: Step 3: Reference imagePullSecrets in pod deployment
+
+Link the secret in the Deployment spec.
+
+```yaml
+spec:
+  imagePullSecrets:
+    - name: regcred
+  containers:
+    - name: web
+      image: myprivate/app:v1.0.0
+```
+
+
+## Common Mistakes to Avoid
+
+- Creating the imagePullSecret in the default namespace while the pod is running in a custom namespace.
+
+## Prevention & Best Practices
+
+- Ensure service accounts have default imagePullSecrets pre-configured in multi-tenant clusters.
+
+
+## Frequently Asked Questions
+
+### Are secrets namespace-scoped in Kubernetes?
+
+Yes, secrets are strictly scoped to the namespace where they are created.
+

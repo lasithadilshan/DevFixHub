@@ -1,0 +1,8 @@
+{
+  "id": "java",
+  "slug": "java",
+  "name": "Java",
+  "description": "Troubleshooting common Java exceptions, JVM errors, Maven dependency locks, and classloader issues.",
+  "icon": "Coffee",
+  "color": "from-amber-500/20 to-orange-500/20 text-amber-500 border-amber-500/30"
+}

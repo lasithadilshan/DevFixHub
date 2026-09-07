@@ -1,0 +1,82 @@
+---
+title: "Express CORS Error: No Access-Control-Allow-Origin"
+description: "Fix 'No 'Access-Control-Allow-Origin' header is present on the requested resource' in Express.js backends."
+slug: "express-cors-error"
+category: "Node.js"
+tags: ["express","cors","api","nodejs"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy"
+---
+
+# Express CORS Error: No Access-Control-Allow-Origin
+
+Fix 'No 'Access-Control-Allow-Origin' header is present on the requested resource' in Express.js backends.
+
+```text
+Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy
+```
+
+## Problem Overview
+
+The client browser refuses to share the response from the Express server because the server did not include CORS headers.
+
+## Why Does This Happen?
+
+- The cors npm package is not installed or not registered as Express middleware.
+- CORS middleware placed after route handlers instead of before them.
+- Missing options for credentials (cookies/auth headers).
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Install and configure cors middleware
+
+Register the cors middleware at the top of your Express app.
+
+```bash
+npm install cors
+```
+
+### Step 2: Step 2: Enable CORS for your specific frontend origin
+
+Configure allowed origins, HTTP methods, and credentials.
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://devfixhub.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+// MUST be declared BEFORE routes
+app.use(cors(corsOptions));
+
+app.get('/api/data', (req, res) => {
+  res.json({ message: 'Success' });
+});
+```
+
+
+## Common Mistakes to Avoid
+
+- Placing app.use(cors()) after app.use('/api', routes), rendering the middleware completely ineffective.
+- Using origin: '*' while setting credentials: true, which is forbidden by browser security specifications.
+
+## Prevention & Best Practices
+
+- Always handle HTTP OPTIONS preflight requests.
+
+
+## Frequently Asked Questions
+
+### Can I use wildcard origin '*' with authentication cookies?
+
+No. The Fetch specification strictly forbids Access-Control-Allow-Origin: * when Access-Control-Allow-Credentials is true.
+

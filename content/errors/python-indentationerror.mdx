@@ -1,0 +1,67 @@
+---
+title: "Python IndentationError: unexpected indent"
+description: "Fix IndentationError and TabError: inconsistent use of tabs and spaces in Python scripts."
+slug: "python-indentationerror"
+category: "Python"
+tags: ["python","syntax","formatting","pep8"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "3 min"
+errorCode: "IndentationError: unexpected indent / TabError: inconsistent use of tabs and spaces in indentation"
+---
+
+# Python IndentationError: unexpected indent
+
+Fix IndentationError and TabError: inconsistent use of tabs and spaces in Python scripts.
+
+```text
+IndentationError: unexpected indent / TabError: inconsistent use of tabs and spaces in indentation
+```
+
+## Problem Overview
+
+Python code execution halts because the indentation level does not match the preceding block or mixes physical tabs and spaces.
+
+## Why Does This Happen?
+
+- Mixing tabs and spaces in the same source file.
+- Copying code from a website or chat with unexpected whitespace characters.
+- Forgetting to indent the block following an if, for, while, def, or class statement.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Convert all indentation to 4 spaces
+
+Configure your editor to insert 4 spaces when pressing Tab.
+
+```bash
+# Automatically reformat files using Black
+pip install black
+black script.py
+```
+
+### Step 2: Step 2: Inspect whitespace characters
+
+Run Python with the -tt flag to report mixed tabs and spaces.
+
+```bash
+python3 -m tabnanny script.py
+```
+
+
+## Common Mistakes to Avoid
+
+- Using single space or uneven indentation inside the same function block.
+
+## Prevention & Best Practices
+
+- Enable 'Render Whitespace' in VS Code to see dots for spaces and arrows for tabs.
+
+
+## Frequently Asked Questions
+
+### Does Python PEP 8 mandate spaces over tabs?
+
+Yes, PEP 8 strictly specifies 4 spaces per indentation level and forbids mixing tabs and spaces.
+

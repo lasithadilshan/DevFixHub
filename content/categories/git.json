@@ -1,0 +1,8 @@
+{
+  "id": "git",
+  "slug": "git",
+  "name": "Git",
+  "description": "Resolving merge conflicts, detached HEAD states, non-fast-forward push rejections, and rebasing safely.",
+  "icon": "GitBranch",
+  "color": "from-orange-500/20 to-red-500/20 text-orange-500 border-orange-500/30"
+}

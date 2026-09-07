@@ -1,0 +1,75 @@
+---
+title: "Spring Boot Failed to Configure DataSource"
+description: "Fix 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured'."
+slug: "spring-boot-failed-to-configure-datasource"
+category: "Spring Boot"
+tags: ["spring-boot","database","jpa","hibernate"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "Action: Consider the following: If you want an embedded database (H2, HSQL or Derby), please put it on the classpath."
+---
+
+# Spring Boot Failed to Configure DataSource
+
+Fix 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured'.
+
+```text
+Action: Consider the following: If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+```
+
+## Problem Overview
+
+Spring Boot added Spring Data JPA to the classpath but cannot find JDBC connection properties or an in-memory database driver.
+
+## Why Does This Happen?
+
+- spring-boot-starter-data-jpa is in pom.xml, but spring.datasource.* properties are missing.
+- No in-memory database dependency like H2 is added for local testing.
+- The application properties file is misspelled (e.g., application.prop instead of application.properties).
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Add JDBC properties to application.properties
+
+Specify the database URL, username, password, and driver class name.
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/mydb
+spring.datasource.username=postgres
+spring.datasource.password=secret
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+```
+
+### Step 2: Step 2: Or disable DataSource autoconfiguration if DB is not needed yet
+
+If you don't need a database connection yet, exclude DataSourceAutoConfiguration.
+
+```java
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+
+## Common Mistakes to Avoid
+
+- Adding spring-boot-starter-data-jpa before provisioning or deciding on a database.
+- Using environment variable names with hyphens that Spring Boot cannot bind to properties.
+
+## Prevention & Best Practices
+
+- Use test profiles (application-test.properties) with H2 in-memory DB for automated builds.
+
+
+## Frequently Asked Questions
+
+### How do I use H2 for local testing without full PostgreSQL?
+
+Add com.h2database:h2 dependency to your pom.xml/build.gradle and Spring Boot will auto-wire an in-memory database.
+

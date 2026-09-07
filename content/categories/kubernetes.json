@@ -1,0 +1,8 @@
+{
+  "id": "kubernetes",
+  "slug": "kubernetes",
+  "name": "Kubernetes",
+  "description": "Troubleshooting CrashLoopBackOff, ImagePullBackOff, Pending pods, Service endpoints, and Ingress routing.",
+  "icon": "Boxes",
+  "color": "from-indigo-500/20 to-blue-500/20 text-indigo-500 border-indigo-500/30"
+}

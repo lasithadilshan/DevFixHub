@@ -1,0 +1,71 @@
+---
+title: "Java OutOfMemoryError: Java Heap Space"
+description: "Diagnose java.lang.OutOfMemoryError: Java heap space, configure JVM -Xmx limits, and identify memory leaks."
+slug: "java-outofmemoryerror"
+category: "Java"
+tags: ["java","jvm","memory","performance"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "java.lang.OutOfMemoryError: Java heap space"
+---
+
+# Java OutOfMemoryError: Java Heap Space
+
+Diagnose java.lang.OutOfMemoryError: Java heap space, configure JVM -Xmx limits, and identify memory leaks.
+
+```text
+java.lang.OutOfMemoryError: Java heap space
+```
+
+## Problem Overview
+
+The Garbage Collector cannot allocate memory for new objects because the JVM allocated maximum heap size (-Xmx) has been fully consumed.
+
+## Why Does This Happen?
+
+- Loading massive datasets (like querying 1,000,000 rows from a database) entirely into memory.
+- Unbounded static collections (e.g. Map caches) that retain object references forever.
+- Default JVM heap limit is too low for the container or workload.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Increase JVM Max Heap Size (-Xmx)
+
+Specify appropriate minimum (-Xms) and maximum (-Xmx) heap size parameters.
+
+```bash
+java -Xms2g -Xmx4g -jar app.jar
+```
+
+### Step 2: Step 2: Stream large database queries instead of List<T>
+
+Use Spring Data JPA Stream or batch pagination to avoid loading all records at once.
+
+```java
+@Transactional(readOnly = true)
+public void exportUsers() {
+    try (Stream<User> userStream = userRepository.streamAll()) {
+        userStream.forEach(this::writeToCsv);
+    }
+}
+```
+
+
+## Common Mistakes to Avoid
+
+- Blindly increasing -Xmx when there is an actual memory leak, merely delaying the eventual crash.
+- Ignoring container cgroup memory limits in Kubernetes, causing the Linux kernel OOMKiller to kill the pod.
+
+## Prevention & Best Practices
+
+- Configure -XX:+HeapDumpOnOutOfMemoryError to capture memory dumps for Eclipse Memory Analyzer (MAT).
+
+
+## Frequently Asked Questions
+
+### Does doubling -Xmx slow down garbage collection?
+
+Yes, larger heaps can increase GC pause times unless using modern low-pause collectors like G1GC or ZGC (-XX:+UseZGC).
+

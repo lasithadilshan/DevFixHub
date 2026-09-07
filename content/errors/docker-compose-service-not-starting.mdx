@@ -1,0 +1,73 @@
+---
+title: "Docker Compose Service Not Starting"
+description: "Fix container restart loops, dependency order race conditions, and network isolation in docker-compose."
+slug: "docker-compose-service-not-starting"
+category: "Docker"
+tags: ["docker","docker-compose","microservices","networking"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "ERROR: for service_name Container exited with code 1"
+---
+
+# Docker Compose Service Not Starting
+
+Fix container restart loops, dependency order race conditions, and network isolation in docker-compose.
+
+```text
+ERROR: for service_name Container exited with code 1
+```
+
+## Problem Overview
+
+A service in docker-compose fails during 'docker compose up' because a dependent service (like PostgreSQL or Redis) is not ready yet.
+
+## Why Does This Happen?
+
+- Application container starts before database container is ready to accept socket connections.
+- depends_on only waits for container start, not service readiness.
+- Volume permission conflicts on host-mounted directories.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Use depends_on with condition: service_healthy
+
+Configure healthchecks so dependent containers wait until the database is truly ready.
+
+```yaml
+version: '3.8'
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: secret
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+```
+
+
+## Common Mistakes to Avoid
+
+- Relying on standard depends_on: ['db'] and assuming PostgreSQL is immediately listening for queries.
+
+## Prevention & Best Practices
+
+- Implement retry loops in application database connection startup logic.
+
+
+## Frequently Asked Questions
+
+### What command lets me view logs across all compose services together?
+
+Run 'docker compose logs -f' to stream interleaved logs from all services in real time.
+

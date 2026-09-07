@@ -1,0 +1,62 @@
+---
+title: "Next.js Hydration Error in App Router"
+description: "Fix hydration failed and server/client mismatch errors specific to Next.js Server Components and Client Components."
+slug: "nextjs-hydration-error"
+category: "React"
+tags: ["nextjs","react","app-router","ssr"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "Unhandled Runtime Error: Hydration failed because the initial UI does not match what was rendered on the server."
+---
+
+# Next.js Hydration Error in App Router
+
+Fix hydration failed and server/client mismatch errors specific to Next.js Server Components and Client Components.
+
+```text
+Unhandled Runtime Error: Hydration failed because the initial UI does not match what was rendered on the server.
+```
+
+## Problem Overview
+
+Next.js App Router renders HTML on the server, but client-side JavaScript produces different DOM nodes during initial load.
+
+## Why Does This Happen?
+
+- Accessing window, document, or localStorage inside Client Components without a mounted check.
+- Mismatch in date/time formatting between server locale and client user locale.
+- HTML syntax violations such as nesting <div> inside <p> or <table> without <tbody>.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Use dynamic imports with ssr: false for client-only widgets
+
+For widgets that strictly rely on client browser state (e.g. geolocation, canvas), disable server rendering.
+
+```tsx
+import dynamic from 'next/dynamic';
+
+const ClientMap = dynamic(() => import('@/components/Map'), {
+  ssr: false,
+  loading: () => <p>Loading map...</p>,
+});
+```
+
+
+## Common Mistakes to Avoid
+
+- Using 'use client' and assuming it completely disables server rendering. Client components in Next.js are still pre-rendered on the server!
+
+## Prevention & Best Practices
+
+- Format dates to a standardized UTC format or use suppressHydrationWarning.
+
+
+## Frequently Asked Questions
+
+### Does 'use client' make a component run exclusively on the client?
+
+No, 'use client' merely marks the boundary where client interactivity is enabled; Next.js still pre-renders its initial HTML on the server.
+

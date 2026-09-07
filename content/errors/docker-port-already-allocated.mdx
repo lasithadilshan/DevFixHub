@@ -1,0 +1,73 @@
+---
+title: "Docker Port Already Allocated"
+description: "Fix 'Error response from daemon: driver failed programming external connectivity on endpoint: Bind for 0.0.0.0:xxxx failed: port is already allocated'."
+slug: "docker-port-already-allocated"
+category: "Docker"
+tags: ["docker","networking","containers","ports"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "docker: Error response from daemon: driver failed programming external connectivity on endpoint: Bind for 0.0.0.0:8080 failed: port is already allocated."
+---
+
+# Docker Port Already Allocated
+
+Fix 'Error response from daemon: driver failed programming external connectivity on endpoint: Bind for 0.0.0.0:xxxx failed: port is already allocated'.
+
+```text
+docker: Error response from daemon: driver failed programming external connectivity on endpoint: Bind for 0.0.0.0:8080 failed: port is already allocated.
+```
+
+## Problem Overview
+
+Docker daemon cannot bind the container port to the host port because the host port is currently in use by another container or local application.
+
+## Why Does This Happen?
+
+- Another Docker container is already running with the same host port mapping.
+- A native host service (Apache, Nginx, PostgreSQL, or local Node/Java app) is listening on that port.
+- Docker Desktop virtual network interface hung.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check running Docker containers
+
+List all active containers to locate the port conflict.
+
+```bash
+docker ps --filter "publish=8080"
+```
+
+### Step 2: Step 2: Stop the conflicting container
+
+Stop the container using its container ID or name.
+
+```bash
+docker stop <container_id_or_name>
+```
+
+### Step 3: Step 3: Map to a different host port
+
+Change the host side of the -p host_port:container_port mapping.
+
+```bash
+docker run -p 8081:8080 my-image
+```
+
+
+## Common Mistakes to Avoid
+
+- Stopping a container without realizing docker-compose restart policy restarts it automatically.
+
+## Prevention & Best Practices
+
+- Use environment variables in docker-compose.yml for configurable host ports (e.g. ${APP_PORT:-8080}:8080).
+
+
+## Frequently Asked Questions
+
+### Does -p 8081:8080 change the port inside the container?
+
+No. The application inside the container still listens on 8080. Only the external host entrypoint is routed through 8081.
+

@@ -1,0 +1,73 @@
+---
+title: "React Cannot Read Properties of Undefined"
+description: "Fix TypeError: Cannot read properties of undefined (reading 'xyz') using optional chaining, nullish coalescing, and defensive checks."
+slug: "react-cannot-read-properties-of-undefined"
+category: "React"
+tags: ["react","javascript","typeerror","debugging"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "TypeError: Cannot read properties of undefined (reading 'address')"
+---
+
+# React Cannot Read Properties of Undefined
+
+Fix TypeError: Cannot read properties of undefined (reading 'xyz') using optional chaining, nullish coalescing, and defensive checks.
+
+```text
+TypeError: Cannot read properties of undefined (reading 'address')
+```
+
+## Problem Overview
+
+React attempts to access a nested property (e.g. user.address.city) on a parent object that has not yet loaded or is undefined.
+
+## Why Does This Happen?
+
+- Asynchronous data has not finished fetching during the component's initial render pass.
+- Accessing optional properties without verifying their existence.
+- Incorrect object destructuring from props.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Use Optional Chaining (?.)
+
+Safely navigate nested properties without throwing if a parent is undefined.
+
+```tsx
+// BAD:
+<span>{user.address.street}</span>
+
+// GOOD:
+<span>{user?.address?.street ?? 'No address provided'}</span>
+```
+
+### Step 2: Step 2: Add early loading state return
+
+Do not render child content until the data is populated.
+
+```tsx
+if (!user) {
+  return <div className="animate-pulse">Loading user details...</div>;
+}
+
+return <div>{user.address.street}</div>;
+```
+
+
+## Common Mistakes to Avoid
+
+- Assuming state set inside useEffect is available on the very first render pass.
+
+## Prevention & Best Practices
+
+- Use TypeScript strictNullChecks in tsconfig.json to catch potential undefined properties at compile time.
+
+
+## Frequently Asked Questions
+
+### What is the difference between ?. and && in React JSX?
+
+Optional chaining (?.) returns undefined if nullish. Logical AND (&&) in JSX can accidentally render '0' or 'false' onto the screen if the left side evaluates to 0.
+

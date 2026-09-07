@@ -1,0 +1,53 @@
+---
+title: "Docker Beginner Guide: From Code to Container"
+description: "Master Docker fundamentals: images, containers, Dockerfiles, volumes, port mapping, and CLI commands."
+slug: "docker-beginner-guide"
+category: "Docker"
+tags: ["docker","devops","containers","linux"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "10 min"
+difficulty: "Beginner"
+---
+
+# Docker Beginner Guide: From Code to Container
+
+Master Docker fundamentals: images, containers, Dockerfiles, volumes, port mapping, and CLI commands.
+
+## Prerequisites
+- Docker Desktop installed
+
+## 1. Anatomy of a Production Dockerfile
+
+Write efficient, layered Dockerfiles using alpine base images.
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+USER node
+CMD ["node", "server.js"]
+```
+
+## 2. Building and Running Containers
+
+Build the image and run it detached with port forwarding.
+
+
+
+## Best Practices
+- Order instructions from least frequently changed (COPY package.json) to most frequently changed (COPY .) for layer cache optimization.
+- Switch to a non-root user (USER node) before the CMD instruction.
+
+## Common Mistakes
+- Forgetting to create a .dockerignore file, copying node_modules and .git folders into the image build context.
+
+## Frequently Asked Questions
+### What is the difference between an image and a container?
+
+An image is a read-only blueprint of file systems and dependencies. A container is a runnable, isolated instance of an image.
+

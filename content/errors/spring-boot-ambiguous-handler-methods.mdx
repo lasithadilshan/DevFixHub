@@ -1,0 +1,80 @@
+---
+title: "Spring Boot Ambiguous Handler Methods"
+description: "Resolve IllegalStateException: Ambiguous mapping caused by duplicate @GetMapping or @PostMapping path signatures."
+slug: "spring-boot-ambiguous-handler-methods"
+category: "Spring Boot"
+tags: ["spring-boot","spring-mvc","rest-controller","routing"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "java.lang.IllegalStateException: Ambiguous mapping. Cannot map 'userController' method"
+---
+
+# Spring Boot Ambiguous Handler Methods
+
+Resolve IllegalStateException: Ambiguous mapping caused by duplicate @GetMapping or @PostMapping path signatures.
+
+```text
+java.lang.IllegalStateException: Ambiguous mapping. Cannot map 'userController' method
+```
+
+## Problem Overview
+
+Spring DispatcherServlet fails to initialize during startup because two controller methods share the identical HTTP method and URL path pattern.
+
+## Why Does This Happen?
+
+- Two controller classes define the exact same @GetMapping('/api/users') endpoint.
+- A base controller is scanned twice with generic request mappings.
+- Copy-pasting an endpoint method and forgetting to change the HTTP method or path.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check the conflicting controller paths in stack trace
+
+Look at the exception log. Spring explicitly prints both conflicting class names and method signatures.
+
+```text
+Ambiguous mapping. Cannot map 'orderController.getOrder(Long)' to {GET [/api/orders/{id}]}: There is already 'invoiceController.getInvoice(Long)' mapped.
+```
+
+### Step 2: Step 2: Differentiate URL paths or HTTP methods
+
+Refactor one of the conflicting endpoints to have a unique path or parameter constraint.
+
+```java
+@RestController
+@RequestMapping("/api/orders")
+public class OrderController {
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.findById(id));
+    }
+
+    @GetMapping(value = "/{id}", params = "detailed=true")
+    public ResponseEntity<OrderDetail> getOrderDetailed(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.findDetailed(id));
+    }
+}
+```
+
+
+## Common Mistakes to Avoid
+
+- Attempting to disambiguate purely by method argument types without altering the URL or parameters constraint.
+- Using @RequestMapping without specifying the method attribute (which defaults to matching all HTTP verbs).
+
+## Prevention & Best Practices
+
+- Always prefix controller classes with specific domain routes (e.g. @RequestMapping('/api/v1/orders')).
+- Write Spring MockMvc tests verifying route resolution.
+
+
+## Frequently Asked Questions
+
+### Can I disambiguate endpoints by query parameters?
+
+Yes, use params attribute: @GetMapping(value = '/search', params = 'type=active').
+

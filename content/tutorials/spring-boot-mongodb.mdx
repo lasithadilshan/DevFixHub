@@ -1,0 +1,60 @@
+---
+title: "Spring Boot with MongoDB"
+description: "Build reactive and document-based microservices using Spring Data MongoDB and MongoRepository."
+slug: "spring-boot-mongodb"
+category: "Spring Boot"
+tags: ["spring-boot","mongodb","nosql","database"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "7 min"
+difficulty: "Beginner"
+---
+
+# Spring Boot with MongoDB
+
+Build reactive and document-based microservices using Spring Data MongoDB and MongoRepository.
+
+## Prerequisites
+- MongoDB instance running locally or MongoDB Atlas connection URI
+
+## 1. Spring Data MongoDB Starter
+
+Add spring-boot-starter-data-mongodb dependency.
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+```
+
+## 2. Mongo Document Definition
+
+Annotate domain models with @Document and @Id.
+
+```java
+@Document(collection = "logs")
+public class ErrorLog {
+    @Id
+    private String id;
+    private String serviceName;
+    private String errorMessage;
+    private Instant timestamp = Instant.now();
+
+    // Getters and Setters
+}
+```
+
+
+## Best Practices
+- Create compound indexes using @CompoundIndex for frequent multi-field queries.
+
+## Common Mistakes
+- Treating MongoDB like a relational database with heavy cross-collection lookups.
+
+## Frequently Asked Questions
+### How do I configure connection strings for MongoDB Atlas?
+
+Set spring.data.mongodb.uri=mongodb+srv://<user>:<password>@cluster.mongodb.net/dbname in application.properties.
+

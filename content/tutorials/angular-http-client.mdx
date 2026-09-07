@@ -1,0 +1,51 @@
+---
+title: "Angular HTTP Client & Interceptors"
+description: "Consume REST APIs in Angular using HttpClient, Bearer token interceptors, and RxJS error operators."
+slug: "angular-http-client"
+category: "Angular"
+tags: ["angular","http","rxjs","interceptors"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# Angular HTTP Client & Interceptors
+
+Consume REST APIs in Angular using HttpClient, Bearer token interceptors, and RxJS error operators.
+
+## Prerequisites
+- Angular Services basics
+
+## 1. Functional HTTP Interceptor
+
+Attach authorization tokens to outgoing HTTP requests automatically.
+
+```typescript
+import { HttpInterceptorFn } from '@angular/common/http';
+
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    const cloned = req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    });
+    return next(cloned);
+  }
+  return next(req);
+};
+```
+
+
+## Best Practices
+- Always type your HTTP calls (this.http.get<User[]>('/api/users')).
+
+## Common Mistakes
+- Mutating HttpRequest objects directly instead of calling req.clone().
+
+## Frequently Asked Questions
+### Where do I register functional interceptors in modern Angular?
+
+Pass them to provideHttpClient(withInterceptors([authInterceptor])) in app.config.ts.
+

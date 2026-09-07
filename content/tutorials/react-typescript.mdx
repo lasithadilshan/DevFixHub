@@ -1,0 +1,61 @@
+---
+title: "React with TypeScript: Complete Component Architecture"
+description: "Type React components, custom hooks, event handlers, and context providers with TypeScript."
+slug: "react-typescript"
+category: "React"
+tags: ["react","typescript","frontend","architecture"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# React with TypeScript: Complete Component Architecture
+
+Type React components, custom hooks, event handlers, and context providers with TypeScript.
+
+## Prerequisites
+- Basic React
+- Basic TypeScript
+
+## 1. Typing Component Props and Children
+
+Use PropsWithChildren and specific event types.
+
+```tsx
+import React, { FC, PropsWithChildren } from 'react';
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary';
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+export const Button: FC<PropsWithChildren<ButtonProps>> = ({
+  variant = 'primary',
+  onClick,
+  children
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`btn ${variant === 'primary' ? 'bg-teal-600' : 'bg-slate-800'}`}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+
+## Best Practices
+- Avoid using any for event handlers; use specific types like React.ChangeEvent<HTMLInputElement>.
+
+## Common Mistakes
+- Declaring types inline inside component arguments rather than creating exportable interfaces.
+
+## Frequently Asked Questions
+### How do I type ref elements in React?
+
+Use useRef<HTMLInputElement>(null) with the corresponding DOM element type.
+

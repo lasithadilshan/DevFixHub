@@ -1,0 +1,85 @@
+---
+title: "Java NullPointerException (NPE)"
+description: "Identify the root cause of java.lang.NullPointerException and prevent it using Optional, Objects, and modern Java patterns."
+slug: "java-nullpointerexception"
+category: "Java"
+tags: ["java","npe","exceptions","clean-code"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "java.lang.NullPointerException: Cannot invoke 'String.length()' because 'str' is null"
+---
+
+# Java NullPointerException (NPE)
+
+Identify the root cause of java.lang.NullPointerException and prevent it using Optional, Objects, and modern Java patterns.
+
+```text
+java.lang.NullPointerException: Cannot invoke 'String.length()' because 'str' is null
+```
+
+## Problem Overview
+
+An application attempts to invoke a method, access a field, or measure the length of an object reference that points to null in memory.
+
+## Why Does This Happen?
+
+- Invoking an instance method on a variable that was never initialized.
+- Accessing elements from an uninitialized collection or map.
+- Auto-unboxing a null wrapper type (e.g. Integer i = null; int x = i;).
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Check Helpful NullPointerExceptions (Java 14+)
+
+Modern Java prints the exact variable that evaluated to null in the exception message.
+
+```text
+Exception in thread 'main' java.lang.NullPointerException: Cannot invoke 'User.getAddress()' because 'user' is null
+```
+
+### Step 2: Step 2: Guard with null checks or Objects.requireNonNull
+
+Validate inputs at the boundaries of public APIs.
+
+```java
+public void processOrder(Order order) {
+    Objects.requireNonNull(order, "Order must not be null");
+    // safe execution
+}
+```
+
+### Step 3: Step 3: Use Java Optional for nullable return values
+
+Return Optional<T> instead of returning null from methods that might not find a result.
+
+```java
+public Optional<User> findById(Long id) {
+    return Optional.ofNullable(userMap.get(id));
+}
+
+// Usage:
+String email = findById(42L)
+    .map(User::getEmail)
+    .orElse("no-email@domain.com");
+```
+
+
+## Common Mistakes to Avoid
+
+- Calling .get() on an Optional without checking .isPresent() first (which throws NoSuchElementException).
+- Calling .equals() on a nullable variable instead of 'CONSTANT'.equals(variable).
+
+## Prevention & Best Practices
+
+- Prefer returning empty collections (Collections.emptyList()) rather than null.
+- Use static analysis tools like SpotBugs or NullAway.
+
+
+## Frequently Asked Questions
+
+### Should I use Optional for class fields or method arguments?
+
+No, Optional is intended strictly as a method return type. Using it in fields wastes memory and breaks serialization.
+

@@ -1,0 +1,77 @@
+---
+title: "Docker Build Failed: Exit Code 1"
+description: "Troubleshoot failed docker build steps, caching mistakes, and package manager failures inside Dockerfiles."
+slug: "docker-build-failed"
+category: "Docker"
+tags: ["docker","dockerfile","build","ci-cd"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "4 min"
+errorCode: "ERROR: executor failed running [/bin/sh -c npm run build]: exit code: 1"
+---
+
+# Docker Build Failed: Exit Code 1
+
+Troubleshoot failed docker build steps, caching mistakes, and package manager failures inside Dockerfiles.
+
+```text
+ERROR: executor failed running [/bin/sh -c npm run build]: exit code: 1
+```
+
+## Problem Overview
+
+A RUN instruction in the Dockerfile returned a non-zero exit code during image compilation.
+
+## Why Does This Happen?
+
+- Compilation error (TypeScript or Babel) during 'npm run build' inside the container.
+- Missing dependencies or build tools (e.g. python, make, g++) needed for native node-gyp modules.
+- Cache invalidation issues pulling outdated dependencies.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Build with --progress=plain to see full error output
+
+Disable BuildKit compressed progress to read the raw compiler stack trace.
+
+```bash
+docker build --no-cache --progress=plain -t my-app .
+```
+
+### Step 2: Step 2: Use multi-stage builds with proper build tooling
+
+Separate build tools from the final slim production runtime image.
+
+```dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package*.json ./
+RUN npm ci --only=production
+CMD ["npm", "start"]
+```
+
+
+## Common Mistakes to Avoid
+
+- Copying the entire local node_modules directory into the container instead of letting 'npm ci' install fresh inside Linux.
+
+## Prevention & Best Practices
+
+- Always create a .dockerignore file excluding node_modules, .git, and build artifacts.
+
+
+## Frequently Asked Questions
+
+### Why should I use 'npm ci' instead of 'npm install' in Dockerfiles?
+
+'npm ci' strictly respects package-lock.json and installs dependencies much faster in automated CI/Docker environments.
+

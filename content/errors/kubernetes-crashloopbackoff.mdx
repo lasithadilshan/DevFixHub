@@ -1,0 +1,80 @@
+---
+title: "Kubernetes CrashLoopBackOff"
+description: "Fix Pod CrashLoopBackOff errors caused by application exceptions, failed liveness probes, or OOMKilled events."
+slug: "kubernetes-crashloopbackoff"
+category: "Kubernetes"
+tags: ["kubernetes","pods","debugging","devops"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "5 min"
+errorCode: "NAME READY STATUS RESTARTS AGE
+api-pod 0/1 CrashLoopBackOff 5 3m"
+---
+
+# Kubernetes CrashLoopBackOff
+
+Fix Pod CrashLoopBackOff errors caused by application exceptions, failed liveness probes, or OOMKilled events.
+
+```text
+NAME READY STATUS RESTARTS AGE
+api-pod 0/1 CrashLoopBackOff 5 3m
+```
+
+## Problem Overview
+
+Kubernetes continuously attempts to restart a pod container that repeatedly crashes after launching.
+
+## Why Does This Happen?
+
+- Application throws an unhandled exception or missing environment variable on startup.
+- Liveness or readiness probe points to an incorrect endpoint or has too short a timeout.
+- Container exceeded memory limit and was terminated with OOMKilled.
+
+## Step-by-Step Fix
+
+### Step 1: Step 1: Inspect pod events with kubectl describe
+
+Check the Last State, Exit Code, and Recent Events section.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Step 2: Step 2: Read logs from the previously crashed container
+
+Use the --previous flag to inspect the log output right before the crash.
+
+```bash
+kubectl logs <pod-name> --previous
+```
+
+### Step 3: Step 3: Tune liveness probe initialDelaySeconds
+
+Give slower JVM or Node apps adequate warm-up time before probes begin.
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+```
+
+
+## Common Mistakes to Avoid
+
+- Running 'kubectl logs <pod-name>' without '--previous', which only shows logs of the currently restarting empty container.
+
+## Prevention & Best Practices
+
+- Always set realistic resources.requests and resources.limits in pod specifications.
+
+
+## Frequently Asked Questions
+
+### What is the backoff exponential timing in CrashLoopBackOff?
+
+Kubernetes delays restarts exponentially: 10s, 20s, 40s, up to a maximum delay of 300 seconds (5 minutes).
+

@@ -1,0 +1,65 @@
+---
+title: "Docker Compose for Multi-Container Environments"
+description: "Orchestrate full-stack applications with web servers, databases, and caches using docker-compose.yml."
+slug: "docker-compose"
+category: "Docker"
+tags: ["docker","docker-compose","devops","microservices"]
+date: "2026-03-01"
+updated: "2026-03-01"
+author: "DevFixHub Core Team"
+readingTime: "9 min"
+difficulty: "Intermediate"
+---
+
+# Docker Compose for Multi-Container Environments
+
+Orchestrate full-stack applications with web servers, databases, and caches using docker-compose.yml.
+
+## Prerequisites
+- Docker basics
+
+## 1. Composing an App with PostgreSQL and Redis
+
+Define isolated networking, volumes, and healthchecks in a single configuration.
+
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:secret@db:5432/myapp
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+```
+
+
+## Best Practices
+- Use named volumes for persistent data so database records survive container restarts.
+- Never commit production secrets in docker-compose.yml; use .env files.
+
+## Common Mistakes
+- Using localhost to connect between compose services instead of their service name (e.g. host 'db').
+
+## Frequently Asked Questions
+### How do services communicate with each other in Docker Compose?
+
+Compose automatically creates a default shared bridge network where services resolve each other by their service name (e.g. 'db', 'redis') via internal DNS.
+
