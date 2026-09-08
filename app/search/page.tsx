@@ -1,8 +1,10 @@
 import { Suspense } from "react";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import SearchResultsClient from "./SearchResultsClient";
 import Breadcrumb from "@/components/Breadcrumb";
 import { constructMetadata } from "@/lib/seo";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = constructMetadata({
   title: "Search Developer Errors, Tools and Tutorials",

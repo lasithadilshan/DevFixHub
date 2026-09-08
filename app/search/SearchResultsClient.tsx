@@ -15,6 +15,12 @@ export default function SearchResultsClient() {
   const [filterType, setFilterType] = useState<"all" | "error" | "tutorial" | "tool" | "category">("all");
   const [results, setResults] = useState<SearchItem[]>([]);
 
+  // Sync query state when URL search params change
+  useEffect(() => {
+    const currentQ = searchParams.get("q") || "";
+    setQuery(currentQ);
+  }, [searchParams]);
+
   useEffect(() => {
     if (query.trim()) {
       const hits = searchContent(query, 50);
