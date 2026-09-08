@@ -74,6 +74,11 @@ export default function AdPlaceholder({
   }
 
   // Development & fallback placeholder with zero CLS layout container
+  // In production, suppress empty placeholder boxes to avoid thin content penalties until AdSense is approved
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+
   return (
     <aside
       aria-label="Advertisement placeholder"

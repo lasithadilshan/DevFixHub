@@ -5,15 +5,15 @@ import { CATEGORIES } from "@/lib/categories";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com";
+  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/lasithadilshan/DevFixHub";
   const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com";
 
   return (
     <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-8">
           {/* Brand Col */}
-          <div className="col-span-2 space-y-4">
+          <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white">
                 <Terminal className="w-4 h-4" />
@@ -59,7 +59,7 @@ export default function Footer() {
               Developer Tools
             </h4>
             <ul className="space-y-2 text-xs">
-              {DEV_TOOLS.slice(0, 6).map((t) => (
+              {DEV_TOOLS.slice(0, 5).map((t) => (
                 <li key={t.slug}>
                   <Link href={`/tools/${t.slug}`} className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
                     {t.name}
@@ -80,7 +80,7 @@ export default function Footer() {
               Categories
             </h4>
             <ul className="space-y-2 text-xs">
-              {CATEGORIES.slice(0, 6).map((c) => (
+              {CATEGORIES.slice(0, 5).map((c) => (
                 <li key={c.slug}>
                   <Link href={`/categories/${c.slug}`} className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
                     {c.name} Solutions
@@ -88,8 +88,47 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/errors" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
-                  Browse All Errors &rarr;
+                <Link href="/categories" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
+                  Browse All 12 Stacks &rarr;
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Tutorials Col */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+              Tutorials
+            </h4>
+            <ul className="space-y-2 text-xs">
+              <li>
+                <Link href="/tutorials/spring-boot-rest-api-tutorial" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Spring Boot REST API
+                </Link>
+              </li>
+              <li>
+                <Link href="/tutorials/build-rest-api-with-fastapi" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  FastAPI Python Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/tutorials/docker-beginner-guide" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Docker Beginner Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/tutorials/kubernetes-beginner-guide" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Kubernetes Cluster Intro
+                </Link>
+              </li>
+              <li>
+                <Link href="/tutorials/building-an-ai-chatbot" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Building an AI Chatbot
+                </Link>
+              </li>
+              <li>
+                <Link href="/tutorials" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
+                  All 30 Tutorials &rarr;
                 </Link>
               </li>
             </ul>

@@ -16,7 +16,7 @@ export default function Navbar() {
     { name: "Developer Errors", href: "/errors", icon: AlertCircle },
     { name: "Tools", href: "/tools", icon: Wrench },
     { name: "Tutorials", href: "/tutorials", icon: BookOpen },
-    { name: "Categories", href: "/categories/react", icon: Layers },
+    { name: "Categories", href: "/categories", icon: Layers },
   ];
 
   return (

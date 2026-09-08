@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Fingerprint, RefreshCw, ShieldCheck } from "lucide-react";
 import CopyButton from "../CopyButton";
 
@@ -22,7 +22,7 @@ export default function UuidGenerator() {
     });
   };
 
-  const generateBatch = () => {
+  const generateBatch = useCallback(() => {
     const list: string[] = [];
     for (let i = 0; i < count; i++) {
       let id = generateV4();
@@ -35,11 +35,11 @@ export default function UuidGenerator() {
       list.push(id);
     }
     setUuids(list);
-  };
+  }, [count, uppercase, hyphens]);
 
   useEffect(() => {
     generateBatch();
-  }, [count, uppercase, hyphens]);
+  }, [generateBatch]);
 
   return (
     <div className="w-full space-y-4">

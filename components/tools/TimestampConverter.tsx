@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Clock, ShieldCheck, Pause, Play, ArrowDown, ArrowUp } from "lucide-react";
 import CopyButton from "../CopyButton";
 
@@ -30,7 +30,7 @@ export default function TimestampConverter() {
   }, [isPaused]);
 
   // Convert Epoch to Formatted Date
-  const convertEpoch = (val = epochInput) => {
+  const convertEpoch = useCallback((val: string) => {
     if (!val.trim()) {
       setParsedUtc("");
       setParsedLocal("");
@@ -71,25 +71,25 @@ export default function TimestampConverter() {
       const minutes = Math.floor(Math.abs(diffSec) / 60);
       setParsedRelative(`in ${minutes} minutes`);
     }
-  };
+  }, []);
 
   // Convert Date to Epoch
-  const convertDate = (val = dateInput) => {
+  const convertDate = useCallback((val: string) => {
     if (!val) return;
     const d = new Date(val);
     if (!isNaN(d.getTime())) {
       setTargetEpochSec(Math.floor(d.getTime() / 1000));
       setTargetEpochMs(d.getTime());
     }
-  };
+  }, []);
 
   useEffect(() => {
     convertEpoch(epochInput);
-  }, [epochInput]);
+  }, [epochInput, convertEpoch]);
 
   useEffect(() => {
     convertDate(dateInput);
-  }, [dateInput]);
+  }, [dateInput, convertDate]);
 
   return (
     <div className="w-full space-y-6">

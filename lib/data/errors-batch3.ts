@@ -414,8 +414,8 @@ export const ERRORS_BATCH_3: ErrorArticle[] = [
         answer: "It means no pods currently match the Service selector labels or all matching pods are failing readiness probes."
       }
     ],
-    relatedErrors: ["kubernetes-ingress"],
-    relatedTutorials: ["kubernetes-service"]
+    relatedErrors: ["kubernetes-crashloopbackoff", "kubernetes-pod-pending"],
+    relatedTutorials: ["kubernetes-service", "kubernetes-ingress"]
   },
   {
     title: "Kubernetes ConfigMap Not Found",
@@ -692,11 +692,11 @@ export const ERRORS_BATCH_3: ErrorArticle[] = [
     relatedTutorials: ["spring-boot-postgresql"]
   },
   {
-    title: "CORS Policy Error: Cross-Origin Resource Sharing",
-    description: "Understand the mechanics of CORS, preflight OPTIONS requests, and how to fix CORS headers across all backend servers.",
+    title: "CORS Policy Error: No Access-Control-Allow-Origin",
+    description: "Fix CORS preflight blocked errors, missing Access-Control-Allow-Origin, and credentials mode conflicts in fetch and axios.",
     slug: "cors-policy-error",
-    category: "Web & Network",
-    tags: ["cors", "http", "security", "browsers"],
+    category: "JavaScript",
+    tags: ["cors", "fetch", "axios", "security", "http"],
     date: "2026-03-01",
     author: "DevFixHub Core Team",
     readingTime: "5 min",
@@ -740,7 +740,7 @@ export const ERRORS_BATCH_3: ErrorArticle[] = [
     title: "REST API 401 Unauthorized Error",
     description: "Fix HTTP 401 Unauthorized errors in JWT, Bearer token authentication, and expired session headers.",
     slug: "rest-api-401-unauthorized-error",
-    category: "Web & Network",
+    category: "Node.js",
     tags: ["rest-api", "jwt", "auth", "http"],
     date: "2026-03-01",
     author: "DevFixHub Core Team",

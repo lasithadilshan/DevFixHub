@@ -452,7 +452,7 @@ export const TUTORIALS_BATCH_1: TutorialArticle[] = [
     title: "TypeScript Beginner Guide: Type Safety for Modern Web Apps",
     description: "Learn TypeScript fundamentals: interfaces, type aliases, generics, union types, and tsconfig settings.",
     slug: "typescript-beginner-guide",
-    category: "TypeScript",
+    category: "JavaScript",
     tags: ["typescript", "javascript", "types", "tooling"],
     date: "2026-03-01",
     author: "DevFixHub Core Team",

@@ -69,8 +69,14 @@ export default function RootLayout({
         )}
       </head>
       <body className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-teal-500/20 selection:text-teal-700 dark:selection:text-teal-300">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-teal-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+        >
+          Skip to main content
+        </a>
         <Navbar />
-        <main className="flex-1 w-full">{children}</main>
+        <main id="main-content" className="flex-1 w-full">{children}</main>
         <Footer />
       </body>
     </html>

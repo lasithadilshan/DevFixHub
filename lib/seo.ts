@@ -7,8 +7,8 @@ export const SITE_CONFIG = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://devfixhub.com",
   author: "DevFixHub Editorial Team",
   links: {
-    github: process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/devfixhub",
-    linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com/company/devfixhub",
+    github: process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/lasithadilshan/DevFixHub",
+    linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com",
   }
 };
 

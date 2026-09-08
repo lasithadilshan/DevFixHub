@@ -41,7 +41,7 @@ export default async function CategoryPage({ params }: PageProps) {
   const categoryTutorials = getTutorialsByCategory(category.name);
 
   const breadcrumbItems = [
-    { name: "Categories", url: "/errors" },
+    { name: "Categories", url: "/categories" },
     { name: category.name, url: `/categories/${category.slug}` },
   ];
 
