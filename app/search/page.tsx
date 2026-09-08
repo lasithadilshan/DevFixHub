@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import SearchResultsClient from "./SearchResultsClient";
+import SearchResultsClient from "@/components/SearchResultsClient";
 import Breadcrumb from "@/components/Breadcrumb";
 import { constructMetadata } from "@/lib/seo";
 

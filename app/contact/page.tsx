@@ -1,7 +1,7 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Mail } from "lucide-react";
 import Breadcrumb from "@/components/Breadcrumb";
-import ContactForm from "./ContactForm";
+import ContactForm from "@/components/ContactForm";
 import { constructMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = constructMetadata({
