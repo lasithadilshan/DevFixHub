@@ -9,24 +9,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_CONFIG.url;
   const now = new Date();
 
-  // Static Pages
-  const staticRoutes = [
-    "",
-    "/errors",
-    "/tutorials",
-    "/tools",
-    "/categories",
-    "/search",
-    "/about",
-    "/contact",
-    "/privacy-policy",
-    "/terms",
-    "/cookie-policy",
-  ].map((route) => ({
+  // Core Indexable Hubs & Informational Pages (excluding noindex /search)
+  const staticHubs = [
+    { route: "", priority: 1.0, changeFrequency: "daily" as const },
+    { route: "/errors", priority: 0.9, changeFrequency: "daily" as const },
+    { route: "/tutorials", priority: 0.9, changeFrequency: "weekly" as const },
+    { route: "/tools", priority: 0.9, changeFrequency: "weekly" as const },
+    { route: "/categories", priority: 0.8, changeFrequency: "weekly" as const },
+    { route: "/about", priority: 0.5, changeFrequency: "monthly" as const },
+    { route: "/contact", priority: 0.5, changeFrequency: "monthly" as const },
+    { route: "/privacy-policy", priority: 0.3, changeFrequency: "monthly" as const },
+    { route: "/terms", priority: 0.3, changeFrequency: "monthly" as const },
+    { route: "/cookie-policy", priority: 0.3, changeFrequency: "monthly" as const },
+  ].map(({ route, priority, changeFrequency }) => ({
     url: `${baseUrl}${route}`,
     lastModified: now,
-    changeFrequency: "daily" as const,
-    priority: route === "" ? 1.0 : 0.8,
+    changeFrequency,
+    priority,
   }));
 
   // Errors (50)
@@ -62,7 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   return [
-    ...staticRoutes,
+    ...staticHubs,
     ...errorRoutes,
     ...tutorialRoutes,
     ...toolRoutes,

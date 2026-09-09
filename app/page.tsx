@@ -9,11 +9,15 @@ import { getAllTools } from "@/lib/tools";
 import { getAllErrors } from "@/lib/content";
 import { getAllTutorials } from "@/lib/content";
 import { CATEGORIES } from "@/lib/categories";
+import { generateWebSiteSchema, generateOrganizationSchema } from "@/lib/seo";
 
 export default function HomePage() {
   const tools = getAllTools();
   const allErrors = getAllErrors();
   const allTutorials = getAllTutorials();
+
+  const websiteSchema = generateWebSiteSchema();
+  const orgSchema = generateOrganizationSchema();
 
   // Curated Popular Errors for quick access
   const popularSlugs = [
@@ -32,7 +36,17 @@ export default function HomePage() {
   const latestTutorials = allTutorials.slice(0, 6);
 
   return (
-    <div className="space-y-16 sm:space-y-24 pb-16">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
+
+      <div className="space-y-16 sm:space-y-24 pb-16">
       {/* Hero Section */}
       <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden border-b border-slate-200/60 dark:border-slate-800/60 bg-gradient-to-b from-teal-500/5 via-transparent to-transparent">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
@@ -293,5 +307,6 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  );
+  </>
+);
 }

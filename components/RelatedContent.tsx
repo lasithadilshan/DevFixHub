@@ -15,9 +15,9 @@ export default function RelatedContent({ errors = [], tutorials = [], tools = []
 
   return (
     <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
-      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-6">
         Related Developer Solutions & Tools
-      </h3>
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {tools.length > 0 && (

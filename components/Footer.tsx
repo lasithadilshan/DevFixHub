@@ -11,7 +11,7 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-6">
           {/* Brand Col */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
@@ -51,6 +51,45 @@ export default function Footer() {
                 </svg>
               </a>
             </div>
+          </div>
+
+          {/* Error Fixes Col */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+              Error Solutions
+            </h4>
+            <ul className="space-y-2 text-xs">
+              <li>
+                <Link href="/errors/spring-boot-port-8080-already-in-use" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
+                  Port 8080 in Use
+                </Link>
+              </li>
+              <li>
+                <Link href="/errors/react-map-is-not-a-function" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
+                  Map is not a Function
+                </Link>
+              </li>
+              <li>
+                <Link href="/errors/angular-cannot-find-module" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
+                  Cannot Find Module
+                </Link>
+              </li>
+              <li>
+                <Link href="/errors/docker-container-exited" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
+                  Docker Container Exited
+                </Link>
+              </li>
+              <li>
+                <Link href="/errors/kubernetes-crashloopbackoff" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
+                  CrashLoopBackOff
+                </Link>
+              </li>
+              <li>
+                <Link href="/errors" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
+                  All 50 Error Guides &rarr;
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* Tools Col */}

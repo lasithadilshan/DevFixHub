@@ -10,6 +10,7 @@ export const metadata: Metadata = constructMetadata({
   title: "Search Developer Errors, Tools and Tutorials",
   description: "Search DevFixHub for solutions to developer errors, free online browser tools, programming tutorials, and technology categories.",
   canonicalUrl: "/search",
+  noindex: true,
 });
 
 export default function SearchPage() {
