@@ -2,7 +2,18 @@
 
 > Practical developer solutions, in-depth troubleshooting guides, and free online developer tools.
 
+[![Live Demo](https://img.shields.io/badge/demo-devfixhub.vercel.app-0070f3?style=for-the-badge&logo=vercel&logoColor=white)](https://devfixhub.vercel.app)
+[![Release](https://img.shields.io/badge/release-v1.0.0-10b981?style=for-the-badge)](https://github.com/lasithadilshan/DevFixHub/releases/tag/v1.0.0)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.0-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/license-MIT-8b5cf6?style=for-the-badge)](LICENSE)
+
 DevFixHub is a production-quality, fast, lightweight, and SEO-optimized developer portal built with **Next.js 15**, **React 19**, **TypeScript**, and **Tailwind CSS**. It is designed from the ground up for high search visibility, zero-latency browser tools, and Google AdSense monetization.
+
+🌐 **Live Website**: [https://devfixhub.vercel.app](https://devfixhub.vercel.app)  
+📦 **GitHub Repository**: [https://github.com/lasithadilshan/DevFixHub](https://github.com/lasithadilshan/DevFixHub)  
+⚡ **Vercel Project**: [https://vercel.com/lasithadilshans-projects/devfixhub](https://vercel.com/lasithadilshans-projects/devfixhub)
 
 ---
 
@@ -148,8 +159,8 @@ DevFixHub/
 ### Quick Start
 ```bash
 # 1. Clone repository
-git clone https://github.com/devfixhub/devfixhub.git
-cd devfixhub
+git clone https://github.com/lasithadilshan/DevFixHub.git
+cd DevFixHub
 
 # 2. Install dependencies
 npm install
@@ -201,7 +212,7 @@ NEXT_PUBLIC_GA_ID=
 NEXT_PUBLIC_ADSENSE_CLIENT=
 
 # Social Media Links
-NEXT_PUBLIC_GITHUB_URL=https://github.com/devfixhub
+NEXT_PUBLIC_GITHUB_URL=https://github.com/lasithadilshan/DevFixHub
 NEXT_PUBLIC_LINKEDIN_URL=https://linkedin.com/company/devfixhub
 ```
 
@@ -294,19 +305,27 @@ DevFixHub includes production-ready AdSense architecture in `components/AdPlaceh
 
 ## Deployment to Vercel
 
-DevFixHub is optimized for zero-configuration Vercel deployment:
+DevFixHub is deployed and running live on **Vercel**:
+
+- 🌐 **Live Production URL**: [https://devfixhub.vercel.app](https://devfixhub.vercel.app)
+- ⚡ **Direct Deployment**: [https://devfixhub-5mpua17jz-lasithadilshans-projects.vercel.app](https://devfixhub-5mpua17jz-lasithadilshans-projects.vercel.app)
+- 📊 **Vercel Project Dashboard**: [https://vercel.com/lasithadilshans-projects/devfixhub](https://vercel.com/lasithadilshans-projects/devfixhub)
+
+### Deploying Updates / Your Own Fork
 
 ```bash
-# Deploy with Vercel CLI
+# Deploy to preview
 npx vercel
 
-# Or push your repository to GitHub and import it into Vercel Dashboard
+# Deploy directly to production
+npx vercel --prod
 ```
 
-Add your production environment variables in Vercel Project Settings:
-- `NEXT_PUBLIC_SITE_URL=https://devfixhub.com`
-- `NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX`
-- `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX`
+### Production Environment Variables (Vercel Project Settings)
+Configure in **Settings → Environment Variables**:
+- `NEXT_PUBLIC_SITE_URL`: `https://devfixhub.vercel.app` (or your custom domain)
+- `NEXT_PUBLIC_ADSENSE_CLIENT`: `ca-pub-XXXXXXXXXXXXXXXX` (optional, for Google AdSense monetization)
+- `NEXT_PUBLIC_GA_ID`: `G-XXXXXXXXXX` (optional, for Google Analytics 4)
 
 ---
 
