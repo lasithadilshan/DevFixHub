@@ -145,6 +145,7 @@ DevFixHub/
 ├── package.json
 ├── tailwind.config.ts
 ├── tsconfig.json
+├── LICENSE
 └── README.md
 ```
 
@@ -331,4 +332,6 @@ Configure in **Settings → Environment Variables**:
 
 ## License
 
-MIT © [DevFixHub](https://devfixhub.com). Free for developers everywhere.
+Distributed under the **MIT License**. See the [`LICENSE`](./LICENSE) file for more details.
+
+Copyright (c) 2026 [Lasitha Dilshan](https://github.com/lasithadilshan) and DevFixHub Contributors. Free for developers everywhere.
