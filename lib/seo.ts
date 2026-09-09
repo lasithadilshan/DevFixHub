@@ -28,7 +28,7 @@ export function constructMetadata({
   ogType?: "website" | "article";
   noindex?: boolean;
 } = {}): Metadata {
-  const fullTitle = title
+  const ogTitle = title
     ? `${title} | ${SITE_CONFIG.name}`
     : SITE_CONFIG.defaultTitle;
 
@@ -39,7 +39,7 @@ export function constructMetadata({
   return {
     metadataBase: new URL(SITE_CONFIG.url),
     title: title
-      ? fullTitle
+      ? title
       : {
           default: SITE_CONFIG.defaultTitle,
           template: `%s | ${SITE_CONFIG.name}`,
@@ -67,7 +67,7 @@ export function constructMetadata({
       canonical: url,
     },
     openGraph: {
-      title: fullTitle,
+      title: ogTitle,
       description,
       url,
       siteName: SITE_CONFIG.name,
@@ -76,7 +76,7 @@ export function constructMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: fullTitle,
+      title: ogTitle,
       description,
       creator: "@devfixhub",
       site: "@devfixhub",
