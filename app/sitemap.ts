@@ -5,6 +5,8 @@ import { getAllTools } from "@/lib/tools";
 import { CATEGORIES } from "@/lib/categories";
 import { SITE_CONFIG } from "@/lib/seo";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_CONFIG.url;
   const now = new Date();

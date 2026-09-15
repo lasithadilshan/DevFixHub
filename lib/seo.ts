@@ -5,7 +5,7 @@ export const SITE_CONFIG = {
   tagline: "Developer Tools, Tutorials & Error Fixes",
   defaultTitle: "DevFixHub – Developer Tools, Tutorials & Error Fixes",
   description: "Free developer tools, practical programming tutorials, and solutions to common software development errors.",
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://devfixhub.vercel.app").replace(/\/+$/, ""),
+  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://devfixhub.site").replace(/\/+$/, ""),
   author: "DevFixHub Editorial Team",
   creator: "DevFixHub",
   publisher: "DevFixHub",

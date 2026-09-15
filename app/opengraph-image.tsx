@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const dynamic = "force-static";
+
 export const alt = "DevFixHub - Developer Tools, Tutorials & Error Fixes";
 export const size = {
   width: 1200,
@@ -93,7 +95,7 @@ export default function Image() {
             letterSpacing: "0.05em",
           }}
         >
-          devfixhub.vercel.app
+          devfixhub.site
         </div>
       </div>
     ),

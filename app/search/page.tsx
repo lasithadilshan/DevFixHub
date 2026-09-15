@@ -4,8 +4,6 @@ import SearchResultsClient from "@/components/SearchResultsClient";
 import Breadcrumb from "@/components/Breadcrumb";
 import { constructMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = constructMetadata({
   title: "Search Developer Errors, Tools and Tutorials",
   description: "Search DevFixHub for solutions to developer errors, free online browser tools, programming tutorials, and technology categories.",
