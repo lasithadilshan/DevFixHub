@@ -3,7 +3,7 @@
 > Practical developer solutions, in-depth troubleshooting guides, and free online developer tools.
 
 [![Live Site](https://img.shields.io/badge/live-devfixhub.site-f38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://devfixhub.site)
-[![Release](https://img.shields.io/badge/release-v1.0.0-10b981?style=for-the-badge)](https://github.com/lasithadilshan/DevFixHub/releases/tag/v1.0.0)
+[![Release](https://img.shields.io/badge/release-v1.1.0-10b981?style=for-the-badge)](https://github.com/lasithadilshan/DevFixHub/releases/tag/v1.1.0)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
