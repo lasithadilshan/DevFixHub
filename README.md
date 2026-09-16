@@ -2,7 +2,7 @@
 
 > Practical developer solutions, in-depth troubleshooting guides, and free online developer tools.
 
-[![Live Demo](https://img.shields.io/badge/demo-devfixhub.vercel.app-0070f3?style=for-the-badge&logo=vercel&logoColor=white)](https://devfixhub.vercel.app)
+[![Live Site](https://img.shields.io/badge/live-devfixhub.site-f38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://devfixhub.site)
 [![Release](https://img.shields.io/badge/release-v1.0.0-10b981?style=for-the-badge)](https://github.com/lasithadilshan/DevFixHub/releases/tag/v1.0.0)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -11,9 +11,10 @@
 
 DevFixHub is a production-quality, fast, lightweight, and SEO-optimized developer portal built with **Next.js 15**, **React 19**, **TypeScript**, and **Tailwind CSS**. It is designed from the ground up for high search visibility, zero-latency browser tools, and Google AdSense monetization.
 
-🌐 **Live Website**: [https://devfixhub.vercel.app](https://devfixhub.vercel.app)  
+🌐 **Live Website**: [https://devfixhub.site](https://devfixhub.site)  
 📦 **GitHub Repository**: [https://github.com/lasithadilshan/DevFixHub](https://github.com/lasithadilshan/DevFixHub)  
-⚡ **Vercel Project**: [https://vercel.com/lasithadilshans-projects/devfixhub](https://vercel.com/lasithadilshans-projects/devfixhub)
+☁️ **Hosting**: [Cloudflare Pages](https://pages.cloudflare.com/) (Global Edge CDN, Automatic SSL & Static HTML Export)  
+⚡ **Vercel Mirror**: [https://devfixhub.vercel.app](https://devfixhub.vercel.app) (Configured with 308 permanent redirects to `devfixhub.site`)
 
 ---
 
@@ -33,7 +34,7 @@ DevFixHub is a production-quality, fast, lightweight, and SEO-optimized develope
 10. [Google AdSense Monetization Setup](#google-adsense-monetization-setup)
 11. [Google Analytics & Search Console Setup](#google-analytics--search-console-setup)
 12. [SEO Architecture & Structured Data](#seo-architecture--structured-data)
-13. [Deployment to Vercel](#deployment-to-vercel)
+13. [Deployment Architecture (Cloudflare Pages & Vercel)](#deployment-architecture)
 14. [Future Roadmap](#future-roadmap)
 
 ---
@@ -199,12 +200,12 @@ npm run start
 ---
 
 ## Environment Variables
-
+ 
 Copy `.env.example` to `.env.local` and configure:
-
+ 
 ```env
 # Canonical site URL
-NEXT_PUBLIC_SITE_URL=https://devfixhub.com
+NEXT_PUBLIC_SITE_URL=https://devfixhub.site
 
 # Google Analytics 4 Measurement ID (leave blank to disable)
 NEXT_PUBLIC_GA_ID=
@@ -214,7 +215,7 @@ NEXT_PUBLIC_ADSENSE_CLIENT=
 
 # Social Media Links
 NEXT_PUBLIC_GITHUB_URL=https://github.com/lasithadilshan/DevFixHub
-NEXT_PUBLIC_LINKEDIN_URL=https://linkedin.com/company/devfixhub
+NEXT_PUBLIC_LINKEDIN_URL=https://linkedin.com
 ```
 
 ---
@@ -296,37 +297,36 @@ DevFixHub includes production-ready AdSense architecture in `components/AdPlaceh
 
 ## Google Analytics & Search Console Setup
 
-1. **Google Analytics 4**: Set `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` in `.env.local`. DevFixHub automatically tracks page views and navigation events without logging user tool inputs.
+1. **Google Analytics 4**: Set `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` in environment variables. DevFixHub automatically tracks page views and navigation events without logging user tool inputs.
 2. **Google Search Console**:
-   - Verify ownership via DNS TXT record or HTML tag.
-   - Submit your dynamic sitemap URL: `https://devfixhub.com/sitemap.xml`.
-   - Googlebot automatically discovers all 100+ pages from `app/sitemap.ts` and `app/robots.ts`.
+   - Domain property verified via DNS TXT record on Cloudflare: `devfixhub.site`.
+   - Dynamic sitemap URL: `https://devfixhub.site/sitemap.xml`.
+   - Googlebot automatically discovers all 112 pages from `app/sitemap.ts` and `app/robots.ts`.
 
 ---
 
-## Deployment to Vercel
+## Deployment Architecture
 
-DevFixHub is deployed and running live on **Vercel**:
+### 1. Primary Production: Cloudflare Pages (Free)
 
-- 🌐 **Live Production URL**: [https://devfixhub.vercel.app](https://devfixhub.vercel.app)
-- ⚡ **Direct Deployment**: [https://devfixhub-5mpua17jz-lasithadilshans-projects.vercel.app](https://devfixhub-5mpua17jz-lasithadilshans-projects.vercel.app)
-- 📊 **Vercel Project Dashboard**: [https://vercel.com/lasithadilshans-projects/devfixhub](https://vercel.com/lasithadilshans-projects/devfixhub)
+DevFixHub is deployed to **Cloudflare Pages** as a fully static Next.js export (`output: 'export'`):
 
-### Deploying Updates / Your Own Fork
+- 🌐 **Primary Production Domain**: [https://devfixhub.site](https://devfixhub.site)
+- 🔒 **Cloudflare Edge URL**: [https://devfixhub.pages.dev](https://devfixhub.pages.dev)
+- 🛡️ **Edge Security**: Native `public/_headers` file applied globally (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`).
 
-```bash
-# Deploy to preview
-npx vercel
+#### Cloudflare Pages Build Settings:
+- **Framework preset**: `Next.js (Static HTML Export)`
+- **Build command**: `npx next build`
+- **Build output directory**: `out`
+- **Environment variables**: `NODE_VERSION=20`
 
-# Deploy directly to production
-npx vercel --prod
-```
+### 2. Legacy Mirror: Vercel (308 Permanent Redirects)
 
-### Production Environment Variables (Vercel Project Settings)
-Configure in **Settings → Environment Variables**:
-- `NEXT_PUBLIC_SITE_URL`: `https://devfixhub.vercel.app` (or your custom domain)
-- `NEXT_PUBLIC_ADSENSE_CLIENT`: `ca-pub-XXXXXXXXXXXXXXXX` (optional, for Google AdSense monetization)
-- `NEXT_PUBLIC_GA_ID`: `G-XXXXXXXXXX` (optional, for Google Analytics 4)
+For SEO continuity and backward-compatibility, the original Vercel project is preserved:
+
+- 🔄 **Vercel URL**: [https://devfixhub.vercel.app](https://devfixhub.vercel.app)
+- ⚡ **Behavior**: Configured via `vercel.json` with a **308 Permanent Redirect** sending all crawler and user traffic seamlessly to `https://devfixhub.site/$1`. This ensures zero broken links and preserves all existing Google search rankings.
 
 ---
 
