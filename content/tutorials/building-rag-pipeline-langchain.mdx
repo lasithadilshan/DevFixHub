@@ -1,0 +1,157 @@
+---
+title: "Building a Production RAG Pipeline with LangChain and Vector Databases"
+description: "Step-by-step guide to architecting an enterprise Retrieval-Augmented Generation (RAG) system with semantic chunking, dense embeddings, vector search, and cross-encoder re-ranking."
+slug: "building-rag-pipeline-langchain"
+category: "AI"
+tags: ["ai","rag","langchain","vector-database","embeddings","python"]
+date: "2026-03-10"
+author: "DevFixHub Core Team"
+readingTime: "14 min"
+difficulty: "Advanced"
+---
+
+# Building a Production RAG Pipeline with LangChain and Vector Databases
+
+Step-by-step guide to architecting an enterprise Retrieval-Augmented Generation (RAG) system with semantic chunking, dense embeddings, vector search, and cross-encoder re-ranking.
+
+## Prerequisites
+- Python 3.10+ and virtual environments
+- Basic understanding of embeddings and vector distance metrics
+- OpenAI API key or local embedding model provider
+
+## 1. Core Architecture of a Production RAG System
+
+A standard naive RAG system suffers from low retrieval precision and context fragmentation. A production-grade RAG pipeline incorporates document normalization, recursive chunking with sentence boundary preservation, dense vector storage (e.g. Chroma, pgvector, or Pinecone), metadata filtering, and reciprocal rank fusion (RRF) with a cross-encoder re-ranker before passing context to the LLM.
+
+```bash
+# Install production dependencies
+pip install langchain langchain-openai langchain-community chromadb sentence-transformers
+```
+
+## 2. Document Ingestion and Semantic Chunking
+
+Fixed-character chunking often slices code blocks or sentences mid-phrase. Using LangChain's RecursiveCharacterTextSplitter with separator hierarchies (`\n\n`, `\n`, `. `, ` `) preserves semantic integrity while maintaining token boundaries.
+
+```python
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+# 1. Load markdown/text documents
+loader = DirectoryLoader(
+    "./knowledge_base",
+    glob="**/*.md",
+    loader_cls=TextLoader
+)
+raw_docs = loader.load()
+
+# 2. Chunk documents with optimal token overlap
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=800,
+    chunk_overlap=150,
+    separators=["\n\n", "\n", "(?<=\. )", " ", ""],
+    length_function=len,
+    is_separator_regex=True
+)
+
+chunked_docs = text_splitter.split_documents(raw_docs)
+print(f"Loaded {len(raw_docs)} files -> Generated {len(chunked_docs)} semantic chunks.")
+```
+
+## 3. Generating Embeddings and Populating Vector Store
+
+Generate dense vector embeddings (1536-dim or 3072-dim) and store them with persistent indexing. We configure Chroma with OpenAI's text-embedding-3-small for high retrieval accuracy at low cost.
+
+```python
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+
+embedding_model = OpenAIEmbeddings(
+    model="text-embedding-3-small",
+    dimensions=1536
+)
+
+# Persist to disk
+vector_store = Chroma.from_documents(
+    documents=chunked_docs,
+    embedding=embedding_model,
+    persist_directory="./chroma_db",
+    collection_name="enterprise_docs"
+)
+
+# Create a retriever with similarity scoring threshold
+retriever = vector_store.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={"k": 6, "score_threshold": 0.65}
+)
+```
+
+## 4. Cross-Encoder Re-Ranking for Precision Filtering
+
+Vector search returns items close in cosine space, but cosine distance does not guarantee relevance to the nuanced question. Passing the top 10 results through a cross-encoder (like BAAI/bge-reranker-base) re-scores question-document pairs directly, discarding irrelevant noise.
+
+```python
+from sentence_transformers import CrossEncoder
+
+# Initialize local cross-encoder reranker
+reranker = CrossEncoder("BAAI/bge-reranker-base")
+
+def rerank_documents(query: str, retrieved_docs: list, top_n: int = 3):
+    pairs = [[query, doc.page_content] for doc in retrieved_docs]
+    scores = reranker.predict(pairs)
+    
+    # Sort docs by descending score
+    scored_docs = sorted(zip(retrieved_docs, scores), key=lambda x: x[1], reverse=True)
+    return [doc for doc, score in scored_docs[:top_n]]
+```
+
+## 5. Assembling the End-to-End Generation Chain with LCEL
+
+Using LangChain Expression Language (LCEL), construct an immutable runnable chain with streaming response capabilities, citation injection, and system guardrails.
+
+```python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+# Define strict RAG prompt template
+prompt = ChatPromptTemplate.from_messages([
+    ("system", """You are a technical support specialist. Answer the question using ONLY the provided context.
+If the context does not contain enough information to answer definitively, state 'I do not have enough context to answer this question.'
+Always reference source document names where available.
+
+Context:
+{context}"""),
+    ("human", "{question}")
+])
+
+llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+
+def format_docs(docs):
+    return "\n\n---\n\n".join(
+        f"[Source: {d.metadata.get('source', 'unknown')}]: {d.page_content}"
+        for d in docs
+    )
+
+# Composable LCEL pipeline
+rag_chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+
+response = rag_chain.invoke("What is the token limit on cluster deployments?")
+print(response)
+```
+
+## Best Practices
+- Always attach metadata (document source, section, last updated timestamp) to chunks for citation tracing.
+- Use hybrid search (BM25 keyword matching + dense vector similarity) to handle exact alphanumeric IDs and acronyms.
+- Enforce maximum context token budgets to prevent LLM context window overflows and excessive inference latency.
+- Evaluate your RAG pipeline using synthetic question generation and RAGAS metrics (Faithfulness, Answer Relevance, Context Recall).
+
+## Common Mistakes
+- Using naive fixed character splitting that truncates sentences, JSON payloads, or code blocks in the middle.
+- Feeding 20+ retrieved chunks directly to the LLM without re-ranking, triggering the 'lost in the middle' attention phenomenon.
+- Allowing hallucination by not instructing the model to decline answering when retrieved context score is below the threshold.

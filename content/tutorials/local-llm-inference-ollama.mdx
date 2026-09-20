@@ -1,0 +1,121 @@
+---
+title: "Running Private Offline LLMs with Ollama and TypeScript"
+description: "Run open-weights LLMs like Llama 3, Mistral, and DeepSeek locally on your machine with complete data privacy using Ollama and the TypeScript SDK."
+slug: "local-llm-inference-ollama"
+category: "AI"
+tags: ["ai","local-llm","ollama","typescript","open-source","privacy"]
+date: "2026-03-16"
+author: "DevFixHub Core Team"
+readingTime: "10 min"
+difficulty: "Intermediate"
+---
+
+# Running Private Offline LLMs with Ollama and TypeScript
+
+Run open-weights LLMs like Llama 3, Mistral, and DeepSeek locally on your machine with complete data privacy using Ollama and the TypeScript SDK.
+
+## Prerequisites
+- Node.js 18+ and TypeScript
+- Machine with at least 8GB RAM (16GB+ recommended for 8B models)
+- Basic terminal familiarity
+
+## 1. Installing Ollama and Pulling Models
+
+Ollama bundles model weights, quantization configurations, and optimized inference runtimes (llama.cpp) into a single unified CLI daemon for macOS, Linux, and Windows.
+
+```bash
+# Install on macOS or Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull and test Llama 3 8B model
+ollama run llama3:8b "Why is the sky blue? Answer in 1 sentence."
+```
+
+## 2. Setting Up the TypeScript Ollama Client
+
+Install the official Ollama JavaScript/TypeScript library. The client connects to the local daemon running at `http://127.0.0.1:11434`.
+
+```bash
+# Install dependencies
+npm install ollama
+npm install -D typescript @types/node tsx
+```
+
+## 3. Streaming Local Completions in TypeScript
+
+Streaming provides instant user feedback with token-by-token rendering without loading entire completions into memory.
+
+```typescript
+import { Ollama } from 'ollama';
+
+const ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+
+async function streamLocalLLM() {
+  const response = await ollama.chat({
+    model: 'llama3:8b',
+    messages: [
+      { role: 'system', content: 'You are an expert TypeScript architect. Keep answers concise.' },
+      { role: 'user', content: 'Explain the benefits of const assertions in TypeScript with a code snippet.' }
+    ],
+    stream: true,
+  });
+
+  process.stdout.write('Response: ');
+  for await (const part of response) {
+    process.stdout.write(part.message.content);
+  }
+  console.log('\n--- Stream complete ---');
+}
+
+streamLocalLLM().catch(console.error);
+```
+
+## 4. Custom Model Creation with Modelfiles
+
+You can bake custom system prompts, temperature parameters, and stop tokens into a customized model alias using Ollama Modelfiles.
+
+```dockerfile
+# Create a file named Modelfile:
+FROM llama3:8b
+
+# Set temperature (lower = more deterministic)
+PARAMETER temperature 0.2
+PARAMETER top_p 0.9
+
+# Set persistent system prompt
+SYSTEM """
+You are CodeAuditBot, a secure code reviewer.
+Review code specifically for OWASP Top 10 vulnerabilities, memory leaks, and performance traps.
+Always output findings in markdown bullet points.
+"""
+```
+
+## 5. Building and Running Your Custom Model
+
+Compile the Modelfile into an Ollama model alias and query it from your TypeScript application.
+
+```bash
+# Build custom model
+ollama create code-audit-bot -f ./Modelfile
+```
+
+```typescript
+// Query in TypeScript
+const audit = await ollama.chat({
+  model: 'code-audit-bot',
+  messages: [{ role: 'user', content: 'Audit this route: app.get("/user", (req, res) => db.query("SELECT * FROM users WHERE id = " + req.query.id));' }]
+});
+
+console.log(audit.message.content);
+```
+
+## Best Practices
+- Select quantized models (e.g. `Q4_K_M`) that comfortably fit in your available GPU VRAM or unified memory.
+- Use the `keep_alive` option to keep models loaded in memory for fast consecutive requests, or set it to `0` to unload immediately and free memory.
+- Configure Ollama environment variables (`OLLAMA_NUM_PARALLEL`, `OLLAMA_MAX_LOADED_MODELS`) for multi-user server instances.
+- Never expose port `11434` directly to the public internet without a reverse proxy and authentication layer.
+
+## Common Mistakes
+- Trying to load 70B parameter models without at least 48GB of unified RAM or multi-GPU setups.
+- Forgetting to check if the Ollama daemon service is active before firing API requests.
+- Ignoring temperature settings when generating structured or factual technical output.

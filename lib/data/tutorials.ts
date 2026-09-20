@@ -1,10 +1,12 @@
 import { TutorialArticle } from "../types";
 import { TUTORIALS_BATCH_1 } from "./tutorials-batch1";
 import { TUTORIALS_BATCH_2 } from "./tutorials-batch2";
+import { TUTORIALS_AI } from "./tutorials-ai";
 
 export const ALL_TUTORIALS: TutorialArticle[] = [
   ...TUTORIALS_BATCH_1,
   ...TUTORIALS_BATCH_2,
+  ...TUTORIALS_AI,
 ];
 
 export function getTutorialBySlug(slug: string): TutorialArticle | undefined {

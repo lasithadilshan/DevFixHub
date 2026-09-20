@@ -1,0 +1,155 @@
+---
+title: "Implementing Multi-Turn LLM Function Calling and Dynamic Tools in TypeScript"
+description: "Build robust agentic workflows where models intelligently select tools, execute TypeScript functions with validated arguments, and synthesize dynamic results."
+slug: "llm-function-calling-tools"
+category: "AI"
+tags: ["ai","function-calling","typescript","tools","llm","agentic"]
+date: "2026-03-18"
+author: "DevFixHub Core Team"
+readingTime: "12 min"
+difficulty: "Advanced"
+---
+
+# Implementing Multi-Turn LLM Function Calling and Dynamic Tools in TypeScript
+
+Build robust agentic workflows where models intelligently select tools, execute TypeScript functions with validated arguments, and synthesize dynamic results.
+
+## Prerequisites
+- Node.js 18+ and TypeScript
+- OpenAI API Key
+- Understanding of asynchronous TypeScript and Zod schema validation
+
+## 1. The Function Calling Lifecycle
+
+Tool calling allows LLMs to interact with the outside world. The cycle consists of:
+1. Client supplies tool schemas to the model.
+2. Model decides whether to reply directly or call one or more tools.
+3. Client executes the matching JavaScript functions.
+4. Client provides tool outputs back to the model.
+5. Model synthesizes the final user response.
+
+```bash
+# Install OpenAI SDK and Zod for validation
+npm install openai zod
+```
+
+## 2. Defining Tools and Typed Schemas with Zod
+
+Use Zod to create schemas that serve as both runtime validators and JSON Schema definitions for the model.
+
+```typescript
+import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import OpenAI from 'openai';
+
+const WeatherQuerySchema = z.object({
+  city: z.string().describe('The name of the city, e.g. Tokyo, London, San Francisco'),
+  unit: z.enum(['celsius', 'fahrenheit']).default('celsius').describe('Temperature unit')
+});
+
+type WeatherQueryParams = z.infer<typeof WeatherQuerySchema>;
+
+// Concrete implementation
+async function fetchWeather(params: WeatherQueryParams) {
+  // Simulate live weather API call
+  return {
+    city: params.city,
+    temperature: params.unit === 'celsius' ? 22 : 72,
+    unit: params.unit,
+    condition: 'Partly Cloudy'
+  };
+}
+
+// Convert to OpenAI Tool definition
+const tools: OpenAI.ChatCompletionTool[] = [
+  {
+    type: 'function',
+    function: {
+      name: 'get_current_weather',
+      description: 'Get the current real-time weather for a given city.',
+      parameters: zodToJsonSchema(WeatherQuerySchema) as Record<string, any>
+    }
+  }
+];
+```
+
+## 3. Multi-Turn Recursive Tool Resolution Loop
+
+In production, an agent must execute multiple tool calls in succession or handle consecutive multi-step workflows until the model has all required information.
+
+```typescript
+const openai = new OpenAI();
+
+async function runAgent(userPrompt: string) {
+  const messages: OpenAI.ChatCompletionMessageParam[] = [
+    { role: 'system', content: 'You are an intelligent assistant with access to real-time tools.' },
+    { role: 'user', content: userPrompt }
+  ];
+
+  let keepGoing = true;
+  let maxTurns = 5;
+
+  while (keepGoing && maxTurns > 0) {
+    maxTurns--;
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages,
+      tools,
+      tool_choice: 'auto',
+    });
+
+    const choice = response.choices[0];
+    const message = choice.message;
+    messages.push(message);
+
+    // If the model didn't call any tools, we are done
+    if (!message.tool_calls || message.tool_calls.length === 0) {
+      keepGoing = false;
+      return message.content;
+    }
+
+    // Execute all tools requested by the model (supports parallel tool calls)
+    for (const toolCall of message.tool_calls) {
+      console.log(`Calling tool: ${toolCall.function.name}`);
+      if (toolCall.function.name === 'get_current_weather') {
+        const rawArgs = JSON.parse(toolCall.function.arguments);
+        const parsedArgs = WeatherQuerySchema.parse(rawArgs);
+        const result = await fetchWeather(parsedArgs);
+
+        // Feed tool result back to the model with matching tool_call_id
+        messages.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content: JSON.stringify(result)
+        });
+      }
+    }
+  }
+
+  throw new Error('Agent exceeded maximum turn limit without resolving.');
+}
+```
+
+## 4. Executing the Agent and Inspecting Results
+
+Call the agent with a prompt that triggers tool invocation and inspect the synthesized response.
+
+```typescript
+async function main() {
+  const result = await runAgent("What is the weather in Tokyo and Paris right now?");
+  console.log("\nFinal Answer:\n", result);
+}
+
+main().catch(console.error);
+```
+
+## Best Practices
+- Always validate parsed JSON tool arguments with a schema library like Zod to prevent crashes from malformed model parameters.
+- Keep tool descriptions explicit and unambiguous so the model can accurately distinguish between similar tools.
+- Implement a strict maximum turn limit (e.g. 5-10 iterations) to avoid expensive infinite execution loops.
+- Always match the `tool_call_id` precisely in the tool response message.
+
+## Common Mistakes
+- Executing sensitive tools (deleting databases, sending emails) without human confirmation.
+- Failing to handle parallel tool calls when the model issues multiple tool requests in a single response.
+- Omitting schema descriptions, leaving the LLM to guess what parameter inputs mean.
