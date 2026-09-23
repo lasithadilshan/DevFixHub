@@ -19,7 +19,7 @@ export default function Footer() {
                 <Terminal className="w-4 h-4" />
               </div>
               <span className="font-bold text-lg text-slate-900 dark:text-slate-100">
-                DevFix<span className="text-teal-600 dark:text-teal-400">Hub</span>
+                DevFix<span className="text-teal-700 dark:text-teal-400">Hub</span>
               </span>
             </Link>
 
@@ -53,20 +53,20 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Error Fixes Col */}
+          {/* Errors Col */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-              Error Solutions
+              Developer Errors
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/errors/spring-boot-port-8080-already-in-use" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
-                  Port 8080 in Use
+                  Port 8080 In Use
                 </Link>
               </li>
               <li>
                 <Link href="/errors/react-map-is-not-a-function" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
-                  Map is not a Function
+                  map() is not a function
                 </Link>
               </li>
               <li>
@@ -76,7 +76,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/errors/docker-container-exited" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-1">
-                  Docker Container Exited
+                  Container Exited (137)
                 </Link>
               </li>
               <li>
@@ -85,7 +85,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/errors" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
+                <Link href="/errors" className="text-teal-700 dark:text-teal-400 font-semibold hover:underline">
                   All 50 Error Guides &rarr;
                 </Link>
               </li>
@@ -106,7 +106,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/tools" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
+                <Link href="/tools" className="text-teal-700 dark:text-teal-400 font-semibold hover:underline">
                   View All 10 Tools &rarr;
                 </Link>
               </li>
@@ -127,7 +127,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/categories" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
+                <Link href="/categories" className="text-teal-700 dark:text-teal-400 font-semibold hover:underline">
                   Browse All 12 Stacks &rarr;
                 </Link>
               </li>
@@ -166,8 +166,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tutorials" className="text-teal-600 dark:text-teal-400 font-medium hover:underline">
-                  All 30 Tutorials &rarr;
+                <Link href="/tutorials" className="text-teal-700 dark:text-teal-400 font-semibold hover:underline">
+                  All 35 Tutorials &rarr;
                 </Link>
               </li>
             </ul>

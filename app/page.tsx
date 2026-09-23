@@ -60,7 +60,7 @@ export default function HomePage() {
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-tight text-balance">
             Fix Developer Errors. <br className="hidden sm:inline" />
-            <span className="text-teal-600 dark:text-teal-400">Build Better Software.</span>
+            <span className="text-teal-700 dark:text-teal-400">Build Better Software.</span>
           </h1>
 
           <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed text-balance">
@@ -96,7 +96,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>Top Troubleshooted Issues</span>
             </div>
@@ -106,7 +106,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/errors"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
           >
             View all 50 error guides <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -128,7 +128,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">
               <Wrench className="w-3.5 h-3.5" />
               <span>100% In-Browser & Private</span>
             </div>
@@ -138,7 +138,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/tools"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
           >
             Explore all 10 free tools <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -155,7 +155,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">
               <Zap className="w-3.5 h-3.5" />
               <span>Recently Updated</span>
             </div>
@@ -165,7 +165,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/errors"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
           >
             See all fixes <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -182,7 +182,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">
               <BookOpen className="w-3.5 h-3.5" />
               <span>Step-by-Step Architecture</span>
             </div>
@@ -192,9 +192,9 @@ export default function HomePage() {
           </div>
           <Link
             href="/tutorials"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
           >
-            Browse all 30 tutorials <ArrowRight className="w-3.5 h-3.5" />
+            Browse all 35 tutorials <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -208,7 +208,7 @@ export default function HomePage() {
       {/* Browse Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider">
             Explore By Ecosystem
           </span>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
@@ -223,10 +223,10 @@ export default function HomePage() {
               href={`/categories/${cat.slug}`}
               className="group flex flex-col p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-teal-500/40 hover:shadow-md transition-all text-center items-center"
             >
-              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-teal-700 dark:text-teal-400 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition-transform">
                 {cat.name.slice(0, 2)}
               </div>
-              <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-100 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
                 {cat.name}
               </span>
             </Link>

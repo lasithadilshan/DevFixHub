@@ -36,7 +36,7 @@ export default function ErrorCard({ error }: { error: ErrorArticle }) {
             </span>
           ))}
         </div>
-        <span className="inline-flex items-center gap-1 font-medium text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform">
+        <span className="inline-flex items-center gap-1 font-semibold text-teal-700 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform">
           View Solution <ArrowRight className="w-3.5 h-3.5" />
         </span>
       </div>

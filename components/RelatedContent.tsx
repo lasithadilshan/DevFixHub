@@ -22,7 +22,7 @@ export default function RelatedContent({ errors = [], tutorials = [], tools = []
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {tools.length > 0 && (
           <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60">
-            <div className="flex items-center gap-2 mb-3 text-teal-600 dark:text-teal-400 font-semibold text-sm">
+            <div className="flex items-center gap-2 mb-3 text-teal-700 dark:text-teal-400 font-semibold text-sm">
               <Wrench className="w-4 h-4" />
               <span>Recommended Tools</span>
             </div>

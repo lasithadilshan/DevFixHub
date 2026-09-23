@@ -1,0 +1,8 @@
+# Target modern evergreen browsers that support ES2020 and ES Modules natively
+# Eliminates redundant polyfills (Array.prototype.at, flat, Object.fromEntries, etc.)
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+not dead
+supports es6-module

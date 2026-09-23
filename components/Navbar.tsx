@@ -29,8 +29,8 @@ export default function Navbar() {
               <Terminal className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-base tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                DevFix<span className="text-teal-600 dark:text-teal-400">Hub</span>
+              <span className="font-bold text-base tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
+                DevFix<span className="text-teal-700 dark:text-teal-400">Hub</span>
               </span>
               <span className="text-[10px] text-slate-500 dark:text-slate-400 -mt-1 hidden sm:inline-block font-mono">
                 Fix Errors. Build Better.
@@ -48,7 +48,7 @@ export default function Navbar() {
                   href={link.href}
                   className={`px-3 py-2 rounded-lg transition-colors ${
                     isActive
-                      ? "text-teal-600 dark:text-teal-400 bg-teal-50/60 dark:bg-teal-950/40 font-semibold"
+                      ? "text-teal-700 dark:text-teal-400 bg-teal-50/80 dark:bg-teal-950/40 font-semibold"
                       : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-900/60"
                   }`}
                 >
@@ -70,19 +70,20 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900"
-            aria-label="Toggle navigation menu"
+            className="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 focus:outline-none"
+            aria-label="Toggle menu"
+            id="mobile-menu-btn"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Nav Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-3 pb-5 space-y-3">
-          <div className="pb-2">
-            <SearchBar compact placeholder="Search errors, tools & guides..." />
+        <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-4 space-y-3">
+          <div className="mb-3">
+            <SearchBar compact placeholder="Search errors, tools, tutorials..." />
           </div>
 
           <div className="space-y-1">
@@ -96,7 +97,7 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40"
+                      ? "text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 font-semibold"
                       : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900"
                   }`}
                 >
