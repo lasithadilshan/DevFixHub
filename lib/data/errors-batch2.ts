@@ -239,54 +239,110 @@ export const ERRORS_BATCH_2: ErrorArticle[] = [
   },
   {
     title: "Node.js Port Already in Use (Error: listen EADDRINUSE)",
-    description: "Fix Error: listen EADDRINUSE: address already in use :::3000 in Node.js and Express servers.",
+    description: "Comprehensive step-by-step fix for Error: listen EADDRINUSE: address already in use :::3000 in Node.js, Express, Next.js, and Docker across macOS, Linux, and Windows.",
     slug: "nodejs-port-already-in-use",
     category: "Node.js",
-    tags: ["nodejs", "express", "networking", "ports"],
+    tags: ["nodejs", "express", "networking", "ports", "docker", "troubleshooting"],
     date: "2026-03-01",
+    updated: "2026-09-23",
     author: "DevFixHub Core Team",
-    readingTime: "3 min",
-    errorCode: "Error: listen EADDRINUSE: address already in use :::3000",
-    problem: "A Node.js or Express HTTP server fails to bind to the requested port because another process is already listening on that port.",
+    readingTime: "7 min",
+    errorCode: "Error: listen EADDRINUSE: address already in use :::3000\n    at Server.setupListenHandle [as _listen2] (net.js:1317:16)\n    at listenInCluster (net.js:1365:12)\n    at Server.listen (net.js:1451:7)",
+    problem: "A Node.js or Express HTTP server fails to bind to the requested TCP port (typically 3000, 5000, or 8080) because the operating system networking stack reports that the socket address is already bound and actively listened to by another process, or remains locked in a lingering TIME_WAIT state.",
     causes: [
-      "A previous node server crashed or was stopped in the background without freeing the socket.",
-      "Another dev server (Next.js, React, or Docker) is running on port 3000.",
-      "nodemon spawned multiple orphan worker processes."
+      "A previous Node.js process crashed or was suspended in the background (common with Ctrl+Z instead of Ctrl+C) without closing its TCP socket listener.",
+      "Another development server (such as Next.js, Vite, React dev server, or a Docker container) is already actively listening on port 3000.",
+      "Development file watchers like nodemon or tsx spawned orphan child worker processes that failed to terminate upon file restart.",
+      "On macOS (Monterey, Ventura, Sonoma, Sequoia), the system AirPlay Receiver or Control Center service occupies ports 5000 and 7000 by default.",
+      "A Docker container has published the host port (-p 3000:3000) and is running in the background.",
+      "In Windows / WSL2, a socket collision occurred between the Windows host networking layer and the WSL virtualized interface."
     ],
     solutionSteps: [
       {
-        title: "Step 1: Find process running on port 3000",
-        description: "Locate the PID listening on the port.",
-        command: "lsof -i :3000\n# On Windows: netstat -ano | findstr :3000",
+        title: "Step 1: Identify the Process ID (PID) Using the Port",
+        description: "Use OS-native diagnostic utilities to identify the exact PID and process name holding the socket lock on port 3000.",
+        command: "# macOS and Linux:\nlsof -i :3000\n# Alternative Linux socket statistics:\nss -lptn 'sport = :3000'\n\n# Windows (PowerShell):\nGet-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess\n\n# Windows (Command Prompt):\nnetstat -ano | findstr :3000",
         language: "bash"
       },
       {
-        title: "Step 2: Kill the orphan process",
-        description: "Terminate the process by PID.",
-        command: "kill -9 <PID>\n# Or kill all node processes:\nkillall node\n# Windows: taskkill /F /IM node.exe",
+        title: "Step 2: Safely Terminate the Conflicting Process",
+        description: "Send a termination signal to release the TCP socket. Use graceful SIGTERM first, followed by SIGKILL if the process is unresponsive.",
+        command: "# macOS and Linux (graceful then force):\nkill -15 <PID>\n# Or force kill if hung:\nkill -9 <PID>\n\n# Fast one-liner to kill whatever is on port 3000 (Linux/macOS):\nfuser -k 3000/tcp\n# Or with npx utility:\nnpx kill-port 3000\n\n# Windows (Command Prompt):\ntaskkill /F /PID <PID>\n\n# Windows (PowerShell):\nStop-Process -Id <PID> -Force",
         language: "bash"
       },
       {
-        title: "Step 3: Make port configurable in code",
-        description: "Allow dynamic fallback port selection in Express.",
-        code: "const PORT = process.env.PORT || 3001;\napp.listen(PORT, () => console.log(`Server running on port ${PORT}`));",
-        language: "javascript"
+        title: "Step 3: Check and Stop Conflicting Docker Containers",
+        description: "If lsof or netstat points to 'com.docker.backend' or 'docker-proxy', inspect and stop active container port bindings.",
+        command: "# Find container bound to port 3000:\ndocker ps --filter 'publish=3000'\n\n# Stop the container:\ndocker stop <container_id_or_name>",
+        language: "bash"
+      },
+      {
+        title: "Step 4: Disable macOS AirPlay Receiver (If Port 5000 or 7000 Fails)",
+        description: "macOS uses port 5000 for AirPlay Receiver by default. If your Express or Flask app uses port 5000, disable AirPlay Receiver in System Settings > General > AirDrop & AirPlay > Toggle off 'AirPlay Receiver'.",
+        command: "# Or quickly run your dev server on a non-conflicting port:\nPORT=5001 npm run dev",
+        language: "bash"
+      },
+      {
+        title: "Step 5: Implement Dynamic Port Configuration and Fallback in Code",
+        description: "Never hardcode port numbers. Configure your Node.js application to check environment variables, command-line arguments, or fallback to an available port.",
+        code: "import express from 'express';\n\nconst app = express();\n\n// Read port from environment or fallback to 3000\nconst DEFAULT_PORT = parseInt(process.env.PORT || '3000', 10);\n\nfunction startServer(port: number) {\n  const server = app.listen(port, () => {\n    console.log(`Server actively running on http://localhost:${port}`);\n  });\n\n  server.on('error', (err: NodeJS.ErrnoException) => {\n    if (err.code === 'EADDRINUSE') {\n      console.warn(`Port ${port} is in use, attempting fallback to port ${port + 1}...`);\n      startServer(port + 1);\n    } else {\n      console.error('Server error:', err);\n    }\n  });\n}\n\nstartServer(DEFAULT_PORT);",
+        language: "typescript"
+      },
+      {
+        title: "Step 6: Implement Graceful Shutdown to Prevent Zombie Sockets",
+        description: "Ensure Node.js intercepts operating system termination signals (SIGINT from Ctrl+C and SIGTERM from hosting platforms/Docker) and closes open server sockets cleanly.",
+        code: "import http from 'http';\nimport app from './app';\n\nconst server = http.createServer(app);\nconst PORT = process.env.PORT || 3000;\n\nserver.listen(PORT, () => {\n  console.log(`Application listening on port ${PORT}`);\n});\n\n// Clean socket shutdown handlers\nfunction shutdown(signal: string) {\n  console.log(`Received ${signal}. Closing HTTP server gracefully...`);\n  server.close(() => {\n    console.log('HTTP server closed. Exiting process.');\n    process.exit(0);\n  });\n\n  // Force close after 10s if connections refuse to finish\n  setTimeout(() => {\n    console.error('Forcefully terminating process due to lingering connections.');\n    process.exit(1);\n  }, 10000);\n}\n\nprocess.on('SIGTERM', () => shutdown('SIGTERM'));\nprocess.on('SIGINT', () => shutdown('SIGINT'));",
+        language: "typescript"
+      }
+    ],
+    alternatives: [
+      {
+        title: "Using kill-port CLI utility for instant one-command fixes",
+        description: "Install or run the kill-port npx utility directly without manually parsing PIDs in terminal.",
+        code: "npx kill-port 3000 8080 5000"
+      },
+      {
+        title: "Assigning Ephemeral Port (Port 0) for automated test suites",
+        description: "In Vitest or Jest integration tests, listening on port 0 directs the OS kernel to assign an available ephemeral port dynamically, preventing port collisions across parallel test workers.",
+        code: "const server = app.listen(0, () => {\n  const address = server.address();\n  const assignedPort = typeof address === 'object' && address ? address.port : 0;\n  console.log(`Test runner running on random open port ${assignedPort}`);\n});"
       }
     ],
     commonMistakes: [
-      "Hardcoding port 3000 instead of checking process.env.PORT."
+      "Suspending the dev server process with Ctrl+Z instead of properly stopping it with Ctrl+C, leaving the socket held by a stopped background job in terminal.",
+      "Hardcoding port 3000 across multiple microservices or frontend and backend apps on the same development workstation.",
+      "Running multiple instances of nodemon or tsx with legacy watch mode flags that fail to kill previous child process trees on crash.",
+      "Forgetting that Docker containers bind ports on the host interface, preventing local Node processes from binding the identical port."
     ],
     preventionTips: [
-      "Add graceful SIGINT / SIGTERM shutdown handlers to close server sockets cleanly."
+      "Use a .env file and process.env.PORT for every service so team members can configure individual ports easily.",
+      "Configure npm scripts to include pre-dev cleanup if orphan processes are common: 'predev': 'npx kill-port 3000 || true'.",
+      "Always register process.on('SIGINT') and process.on('SIGTERM') handlers in production microservices and local tools.",
+      "In Docker Compose setups, assign distinct host port ranges for different projects (e.g., 3001:3000, 3002:3000)."
     ],
     faq: [
       {
-        question: "How can I automatically find an open port in Node.js?",
-        answer: "Listen on port 0 (server.listen(0)), which instructs the OS to assign an unused ephemeral port."
+        question: "What does 'EADDRINUSE: address already in use :::3000' mean with the triple colons?",
+        answer: "The triple colons (:::3000) represent the IPv6 unspecified address (equivalent to 0.0.0.0 in IPv4). Modern Node.js binds to dual-stack IPv6 by default. It means another process is already bound to port 3000 on either IPv6 or IPv4."
+      },
+      {
+        question: "Why does lsof -i :3000 return nothing on Linux even when the error occurs?",
+        answer: "On Linux, if the process belongs to another user or was started by root/Docker/systemd, running lsof without root permissions will fail to show the process. Always prepend sudo: sudo lsof -i :3000 or sudo ss -tulpn | grep 3000."
+      },
+      {
+        question: "Why does nodemon constantly cause EADDRINUSE on save?",
+        answer: "nodemon sends SIGUSR2 by default to restart your app. If your code has asynchronous cleanup or keeps open database pools or TCP keep-alive sockets, the new process attempts to bind the port before the old process finishes unbinding. Handle process.once('SIGUSR2') to close the server gracefully."
+      },
+      {
+        question: "How do I fix port 5000 in use on macOS Monterey / Ventura / Sonoma?",
+        answer: "Apple uses port 5000 for the AirPlay Receiver server. Navigate to macOS System Settings > General > AirDrop & AirPlay, and toggle off 'AirPlay Receiver', or configure your Node app to use port 5001 or 3000 instead."
+      },
+      {
+        question: "Can two processes listen on the same port using SO_REUSEPORT in Node.js?",
+        answer: "In standard Node.js net/http modules, no. Only the Node.js cluster module uses the operating system's internal socket sharing to distribute incoming requests across master and worker child processes on the same port."
       }
     ],
     relatedErrors: ["spring-boot-port-8080-already-in-use", "docker-port-already-allocated"],
-    relatedTutorials: ["nodejs-rest-api"]
+    relatedTutorials: ["nodejs-rest-api", "expressjs-authentication"]
   },
   {
     title: "Node.js Cannot Find Module (Error: MODULE_NOT_FOUND)",

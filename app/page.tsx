@@ -21,12 +21,15 @@ export default function HomePage() {
 
   // Curated Popular Errors for quick access
   const popularSlugs = [
+    "nodejs-port-already-in-use",
+    "spring-boot-failed-to-configure-datasource",
     "spring-boot-port-8080-already-in-use",
-    "spring-boot-ambiguous-handler-methods",
     "react-map-is-not-a-function",
     "angular-cannot-find-module",
     "docker-container-exited",
     "kubernetes-imagepullbackoff",
+    "spring-boot-ambiguous-handler-methods",
+    "python-typeerror-not-subscriptable",
   ];
   const popularErrors = popularSlugs
     .map((slug) => allErrors.find((e) => e.slug === slug))

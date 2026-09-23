@@ -10,7 +10,8 @@ import {
   constructMetadata,
   generateArticleSchema,
   generateBreadcrumbSchema,
-  generateFAQSchema
+  generateFAQSchema,
+  generateHowToSchema,
 } from "@/lib/seo";
 
 interface PageProps {
@@ -61,6 +62,14 @@ export default async function ErrorDetailPage({ params }: PageProps) {
 
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
   const faqSchema = error.faq.length > 0 ? generateFAQSchema(error.faq) : null;
+  const howToSchema = error.solutionSteps && error.solutionSteps.length > 0
+    ? generateHowToSchema({
+        name: `How to Fix ${error.title}`,
+        description: error.description,
+        url: `/errors/${error.slug}`,
+        steps: error.solutionSteps,
+      })
+    : null;
 
   return (
     <>
@@ -77,6 +86,12 @@ export default async function ErrorDetailPage({ params }: PageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {howToSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
         />
       )}
 
@@ -158,7 +173,11 @@ export default async function ErrorDetailPage({ params }: PageProps) {
 
               <div className="space-y-6">
                 {error.solutionSteps.map((step, index) => (
-                  <div key={index} className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-3">
+                  <div
+                    key={index}
+                    id={`step-${index + 1}`}
+                    className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-3 scroll-mt-20"
+                  >
                     <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                       {step.title}
                     </h3>

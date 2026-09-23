@@ -1,54 +1,142 @@
 ---
-title: "Spring Boot Failed to Configure DataSource"
-description: "Fix 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured'."
+title: "Spring Boot Failed to Configure DataSource (url attribute is not specified)"
+description: "Exhaustive step-by-step fix for 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured' in Spring Boot 3.x and 2.x across PostgreSQL, MySQL, H2, Docker, and Test suites."
 slug: "spring-boot-failed-to-configure-datasource"
 category: "Spring Boot"
-tags: ["spring-boot","database","jpa","hibernate"]
+tags: ["spring-boot","database","jpa","hibernate","postgresql","mysql","h2","docker"]
 date: "2026-03-01"
-updated: "2026-03-01"
+updated: "2026-09-23"
 author: "DevFixHub Core Team"
-readingTime: "4 min"
-errorCode: "Action: Consider the following: If you want an embedded database (H2, HSQL or Derby), please put it on the classpath."
+readingTime: "8 min"
+errorCode: "Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured."
 ---
 
-# Spring Boot Failed to Configure DataSource
+# Spring Boot Failed to Configure DataSource (url attribute is not specified)
 
-Fix 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured'.
+Exhaustive step-by-step fix for `Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured` in Spring Boot 3.x and 2.x across PostgreSQL, MySQL, H2, Docker, and Test suites.
 
 ```text
-Action: Consider the following: If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
 ```
 
 ## Problem Overview
 
-Spring Boot added Spring Data JPA to the classpath but cannot find JDBC connection properties or an in-memory database driver.
+During startup, Spring Boot auto-configuration detects `DataSourceAutoConfiguration` triggered by `spring-boot-starter-data-jpa` or `spring-boot-starter-jdbc` on the classpath. However, the `ApplicationContext` terminates because neither JDBC connection properties (`spring.datasource.url`) were supplied in active property files/environment variables, nor was an embedded in-memory database driver (H2, HSQL, or Derby) found on the runtime classpath.
 
 ## Why Does This Happen?
 
-- spring-boot-starter-data-jpa is in pom.xml, but spring.datasource.* properties are missing.
-- No in-memory database dependency like H2 is added for local testing.
-- The application properties file is misspelled (e.g., application.prop instead of application.properties).
+- A starter dependency like `spring-boot-starter-data-jpa` was added to `pom.xml` or `build.gradle`, but database credentials were not configured in `application.properties` or `application.yml`.
+- Missing driver dependency in your build tool (e.g. omitting `org.postgresql:postgresql` or `com.mysql:mysql-connector-j`).
+- Profile-specific configuration mismatch where database credentials exist in `application-dev.properties` or `application-prod.yml`, but the profile was not activated via `-Dspring.profiles.active=dev`.
+- Misspelled property file name (e.g. `applications.properties`, `application.prop`) or invalid indentation in `application.yml`.
+- Unit tests annotated with `@DataJpaTest` or `@SpringBootTest` failing because no embedded database dependency is provided for test scope.
+- Environment variable naming mistakes in Docker or Kubernetes deployments (e.g., using `SPRING_DATASOURCE-URL` instead of `SPRING_DATASOURCE_URL`).
 
-## Step-by-Step Fix
+## Step-by-Step Solution
 
-### Step 1: Step 1: Add JDBC properties to application.properties
+### Step 1: Configure Database Properties in application.properties or application.yml
 
-Specify the database URL, username, password, and driver class name.
+Provide explicit connection properties for your target relational database (PostgreSQL, MySQL, or Oracle) including the JDBC URL, credentials, and driver class name.
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/mydb
+# application.properties (PostgreSQL Example):
+spring.datasource.url=jdbc:postgresql://localhost:5432/devfix_db
 spring.datasource.username=postgres
-spring.datasource.password=secret
+spring.datasource.password=secretpassword
 spring.datasource.driver-class-name=org.postgresql.Driver
+
+# HikariCP Connection Pool Settings
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+
+# JPA / Hibernate
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# --- OR application.yml format ---
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://localhost:5432/devfix_db
+#     username: postgres
+#     password: secretpassword
+#     driver-class-name: org.postgresql.Driver
 ```
 
-### Step 2: Step 2: Or disable DataSource autoconfiguration if DB is not needed yet
+### Step 2: Verify Database Driver Dependency in pom.xml or build.gradle
 
-If you don't need a database connection yet, exclude DataSourceAutoConfiguration.
+Ensure the JDBC driver corresponding to your database is declared in your project dependencies. Spring Boot manages driver versions automatically through the parent BOM.
+
+```xml
+<!-- Maven (pom.xml) for PostgreSQL -->
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- OR for MySQL -->
+<!--
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+-->
+
+// Gradle (build.gradle)
+// runtimeOnly 'org.postgresql:postgresql'
+```
+
+### Step 3: Use In-Memory H2 Database for Local Development and Rapid Prototyping
+
+If you want to run the application immediately without provisioning external PostgreSQL or MySQL instances, add H2 to the classpath. Spring Boot will automatically provision an embedded in-memory database with zero configuration.
+
+```xml
+<!-- Add to pom.xml -->
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+# Optional: Enable H2 web console in application.properties
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+```
+
+### Step 4: Exclude DataSourceAutoConfiguration if Database is Not Required
+
+If you added starter dependencies for future use or your microservice only uses Mongo, Redis, or REST clients, exclude the auto-configuration classes on the main SpringBootApplication class.
 
 ```java
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+package com.devfixhub.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+
+@SpringBootApplication(exclude = {
+    DataSourceAutoConfiguration.class,
+    HibernateJpaAutoConfiguration.class
+})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -56,20 +144,47 @@ public class Application {
 }
 ```
 
+### Step 5: Set Environment Variables in Docker, Kubernetes, or Cloud Platforms
+
+In containerized deployments, override `spring.datasource` properties using uppercase relaxed environment variables.
+
+```bash
+# Docker Run Example:
+docker run -d -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://db.internal:5432/prod_db \
+  -e SPRING_DATASOURCE_USERNAME=dbuser \
+  -e SPRING_DATASOURCE_PASSWORD=strongpassword \
+  my-spring-boot-app:latest
+```
+
+### Step 6: Fix Embedded Database Errors in Unit Tests (@DataJpaTest)
+
+When running repository tests with `@DataJpaTest`, Spring Boot replaces your real DataSource with an embedded test database by default. If H2 is not on test classpath, configure the test to avoid replacing the real datasource.
+
+```java
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(properties = {
+    "spring.datasource.url=jdbc:tc:postgresql:16:///testdb"
+})
+class UserRepositoryTests {
+    @Autowired
+    private UserRepository userRepository;
+    // Tests using Testcontainers or test profile
+}
+```
 
 ## Common Mistakes to Avoid
 
-- Adding spring-boot-starter-data-jpa before provisioning or deciding on a database.
-- Using environment variable names with hyphens that Spring Boot cannot bind to properties.
+- Including `spring-boot-starter-data-jpa` in `pom.xml` without any database driver or connection configuration.
+- Using `application.properties` with misspelled property keys like `spring.data.url` or `spring.datasource.jdbc-url` instead of `spring.datasource.url`.
+- Indentation errors in `application.yml` causing the `datasource` block to fall outside the `spring:` hierarchy.
+- Using hyphens in system environment variable names (e.g., `SPRING-DATASOURCE-URL`) which Linux and Docker shells reject.
+- Running `@SpringBootTest` suites without specifying an active test profile or testcontainers dependency.
 
 ## Prevention & Best Practices
 
-- Use test profiles (application-test.properties) with H2 in-memory DB for automated builds.
-
-
-## Frequently Asked Questions
-
-### How do I use H2 for local testing without full PostgreSQL?
-
-Add com.h2database:h2 dependency to your pom.xml/build.gradle and Spring Boot will auto-wire an in-memory database.
-
+- Maintain an `application-dev.properties` for local team development and an `application-test.properties` using H2 for lightning-fast CI/CD pipeline tests.
+- Use Spring Boot's configuration metadata to enable IDE autocompletion for `spring.datasource.*` keys in IntelliJ IDEA and VS Code.
+- Configure health checks using `spring-boot-starter-actuator` to verify database connectivity at `/actuator/health` on startup.
+- Adopt Testcontainers (`org.testcontainers:postgresql`) for integration tests to test against identical production database engines.

@@ -120,50 +120,112 @@ export const ERRORS_BATCH_1: ErrorArticle[] = [
     relatedTutorials: ["spring-boot-rest-api-tutorial"]
   },
   {
-    title: "Spring Boot Failed to Configure DataSource",
-    description: "Fix 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured'.",
+    title: "Spring Boot Failed to Configure DataSource (url attribute is not specified)",
+    description: "Exhaustive step-by-step fix for 'Failed to configure a DataSource: url attribute is not specified and no embedded datasource could be configured' in Spring Boot 3.x and 2.x across PostgreSQL, MySQL, H2, Docker, and Test suites.",
     slug: "spring-boot-failed-to-configure-datasource",
     category: "Spring Boot",
-    tags: ["spring-boot", "database", "jpa", "hibernate"],
+    tags: ["spring-boot", "database", "jpa", "hibernate", "postgresql", "mysql", "h2", "docker"],
     date: "2026-03-01",
+    updated: "2026-09-23",
     author: "DevFixHub Core Team",
-    readingTime: "4 min",
-    errorCode: "Action: Consider the following: If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.",
-    problem: "Spring Boot added Spring Data JPA to the classpath but cannot find JDBC connection properties or an in-memory database driver.",
+    readingTime: "8 min",
+    errorCode: "***************************\nAPPLICATION FAILED TO START\n***************************\n\nDescription:\n\nFailed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.\n\nReason: Failed to determine a suitable driver class\n\nAction:\n\nConsider the following:\n\tIf you want an embedded database (H2, HSQL or Derby), please put it on the classpath.\n\tIf you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).",
+    problem: "During startup, Spring Boot auto-configuration detects DataSourceAutoConfiguration triggered by spring-boot-starter-data-jpa or spring-boot-starter-jdbc on the classpath. However, the ApplicationContext terminates because neither JDBC connection properties (spring.datasource.url) were supplied in active property files/environment variables, nor was an embedded in-memory database driver (H2, HSQL, or Derby) found on the runtime classpath.",
     causes: [
-      "spring-boot-starter-data-jpa is in pom.xml, but spring.datasource.* properties are missing.",
-      "No in-memory database dependency like H2 is added for local testing.",
-      "The application properties file is misspelled (e.g., application.prop instead of application.properties)."
+      "A starter dependency like spring-boot-starter-data-jpa was added to pom.xml or build.gradle, but database credentials were not configured in application.properties or application.yml.",
+      "Missing driver dependency in your build tool (e.g. omitting org.postgresql:postgresql or com.mysql:mysql-connector-j).",
+      "Profile-specific configuration mismatch where database credentials exist in application-dev.properties or application-prod.yml, but the profile was not activated via -Dspring.profiles.active=dev.",
+      "Misspelled property file name (e.g. applications.properties, application.prop) or invalid indentation in application.yml.",
+      "Unit tests annotated with @DataJpaTest or @SpringBootTest failing because no embedded database dependency is provided for test scope.",
+      "Environment variable naming mistakes in Docker or Kubernetes deployments (e.g., using SPRING_DATASOURCE-URL instead of SPRING_DATASOURCE_URL)."
     ],
     solutionSteps: [
       {
-        title: "Step 1: Add JDBC properties to application.properties",
-        description: "Specify the database URL, username, password, and driver class name.",
-        code: "spring.datasource.url=jdbc:postgresql://localhost:5432/mydb\nspring.datasource.username=postgres\nspring.datasource.password=secret\nspring.datasource.driver-class-name=org.postgresql.Driver\nspring.jpa.hibernate.ddl-auto=update",
+        title: "Step 1: Configure Database Properties in application.properties or application.yml",
+        description: "Provide explicit connection properties for your target relational database (PostgreSQL, MySQL, or Oracle) including the JDBC URL, credentials, and driver class name.",
+        code: "# application.properties (PostgreSQL Example):\nspring.datasource.url=jdbc:postgresql://localhost:5432/devfix_db\nspring.datasource.username=postgres\nspring.datasource.password=secretpassword\nspring.datasource.driver-class-name=org.postgresql.Driver\n\n# HikariCP Connection Pool Settings\nspring.datasource.hikari.maximum-pool-size=10\nspring.datasource.hikari.minimum-idle=5\nspring.datasource.hikari.connection-timeout=30000\n\n# JPA / Hibernate\nspring.jpa.hibernate.ddl-auto=update\nspring.jpa.show-sql=true\nspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n\n# --- OR application.yml format ---\n# spring:\n#   datasource:\n#     url: jdbc:postgresql://localhost:5432/devfix_db\n#     username: postgres\n#     password: secretpassword\n#     driver-class-name: org.postgresql.Driver",
         language: "properties"
       },
       {
-        title: "Step 2: Or disable DataSource autoconfiguration if DB is not needed yet",
-        description: "If you don't need a database connection yet, exclude DataSourceAutoConfiguration.",
-        code: "@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})\npublic class Application {\n    public static void main(String[] args) {\n        SpringApplication.run(Application.class, args);\n    }\n}",
+        title: "Step 2: Verify Database Driver Dependency in pom.xml or build.gradle",
+        description: "Ensure the JDBC driver corresponding to your database is declared in your project dependencies. Spring Boot manages driver versions automatically through the parent BOM.",
+        code: "<!-- Maven (pom.xml) for PostgreSQL -->\n<dependency>\n    <groupId>org.postgresql</groupId>\n    <artifactId>postgresql</artifactId>\n    <scope>runtime</scope>\n</dependency>\n\n<!-- OR for MySQL -->\n<!--\n<dependency>\n    <groupId>com.mysql</groupId>\n    <artifactId>mysql-connector-j</artifactId>\n    <scope>runtime</scope>\n</dependency>\n-->\n\n// Gradle (build.gradle)\n// runtimeOnly 'org.postgresql:postgresql'",
+        language: "xml"
+      },
+      {
+        title: "Step 3: Use In-Memory H2 Database for Local Development and Rapid Prototyping",
+        description: "If you want to run the application immediately without provisioning external PostgreSQL or MySQL instances, add H2 to the classpath. Spring Boot will automatically provision an embedded in-memory database with zero configuration.",
+        code: "<!-- Add to pom.xml -->\n<dependency>\n    <groupId>com.h2database</groupId>\n    <artifactId>h2</artifactId>\n    <scope>runtime</scope>\n</dependency>\n\n# Optional: Enable H2 web console in application.properties\nspring.h2.console.enabled=true\nspring.h2.console.path=/h2-console\nspring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+        language: "xml"
+      },
+      {
+        title: "Step 4: Exclude DataSourceAutoConfiguration if Database is Not Required",
+        description: "If you added starter dependencies for future use or your microservice only uses Mongo, Redis, or REST clients, exclude the auto-configuration classes on the main SpringBootApplication class.",
+        code: "package com.devfixhub.app;\n\nimport org.springframework.boot.SpringApplication;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\nimport org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;\nimport org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;\n\n@SpringBootApplication(exclude = {\n    DataSourceAutoConfiguration.class,\n    HibernateJpaAutoConfiguration.class\n})\npublic class Application {\n    public static void main(String[] args) {\n        SpringApplication.run(Application.class, args);\n    }\n}",
+        language: "java"
+      },
+      {
+        title: "Step 5: Set Environment Variables in Docker, Kubernetes, or Cloud Platforms",
+        description: "In containerized deployments, override spring.datasource properties using uppercase relaxed environment variables.",
+        command: "# Docker Run Example:\ndocker run -d -p 8080:8080 \\\n  -e SPRING_DATASOURCE_URL=jdbc:postgresql://db.internal:5432/prod_db \\\n  -e SPRING_DATASOURCE_USERNAME=dbuser \\\n  -e SPRING_DATASOURCE_PASSWORD=strongpassword \\\n  my-spring-boot-app:latest",
+        language: "bash"
+      },
+      {
+        title: "Step 6: Fix Embedded Database Errors in Unit Tests (@DataJpaTest)",
+        description: "When running repository tests with @DataJpaTest, Spring Boot replaces your real DataSource with an embedded test database by default. If H2 is not on test classpath, configure the test to avoid replacing the real datasource.",
+        code: "@DataJpaTest\n@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)\n@TestPropertySource(properties = {\n    \"spring.datasource.url=jdbc:tc:postgresql:16:///testdb\"\n})\nclass UserRepositoryTests {\n    @Autowired\n    private UserRepository userRepository;\n    // Tests using Testcontainers or test profile\n}",
         language: "java"
       }
     ],
+    alternatives: [
+      {
+        title: "Dynamic Profile Activation via Command-Line / JVM Arg",
+        description: "Activate your environment profile if credentials reside in application-local.properties or application-dev.yml.",
+        code: "java -jar target/app.jar --spring.profiles.active=dev\n# Or with Maven plugin:\nmvn spring-boot:run -Dspring-boot.run.profiles=dev"
+      },
+      {
+        title: "Multi-DataSource Configuration with @Primary",
+        description: "If your application communicates with multiple databases, declare custom @Configuration beans with @ConfigurationProperties to bypass single-datasource auto-configuration.",
+        code: "@Configuration\npublic class DataSourceConfig {\n    @Primary\n    @Bean\n    @ConfigurationProperties(\"spring.datasource.primary\")\n    public DataSourceProperties primaryProperties() {\n        return new DataSourceProperties();\n    }\n\n    @Primary\n    @Bean\n    public DataSource primaryDataSource() {\n        return primaryProperties().initializeDataSourceBuilder().build();\n    }\n}"
+      }
+    ],
     commonMistakes: [
-      "Adding spring-boot-starter-data-jpa before provisioning or deciding on a database.",
-      "Using environment variable names with hyphens that Spring Boot cannot bind to properties."
+      "Including spring-boot-starter-data-jpa in pom.xml without any database driver or connection configuration.",
+      "Using application.properties with misspelled property keys like spring.data.url or spring.datasource.jdbc-url instead of spring.datasource.url.",
+      "Indentation errors in application.yml causing the datasource block to fall outside the spring: hierarchy.",
+      "Using hyphens in system environment variable names (e.g., SPRING-DATASOURCE-URL) which Linux and Docker shells reject.",
+      "Running @SpringBootTest suites without specifying an active test profile or testcontainers dependency."
     ],
     preventionTips: [
-      "Use test profiles (application-test.properties) with H2 in-memory DB for automated builds."
+      "Maintain an application-dev.properties for local team development and an application-test.properties using H2 for lightning-fast CI/CD pipeline tests.",
+      "Use Spring Boot's configuration metadata to enable IDE autocompletion for spring.datasource.* keys in IntelliJ IDEA and VS Code.",
+      "Configure health checks using spring-boot-starter-actuator to verify database connectivity at /actuator/health on startup.",
+      "Adopt Testcontainers (org.testcontainers:postgresql) for integration tests to test against identical production database engines."
     ],
     faq: [
       {
-        question: "How do I use H2 for local testing without full PostgreSQL?",
-        answer: "Add com.h2database:h2 dependency to your pom.xml/build.gradle and Spring Boot will auto-wire an in-memory database."
+        question: "Why does Spring Boot try to configure a database even if I haven't written any database code?",
+        answer: "Spring Boot uses classpath scanning. If spring-boot-starter-data-jpa or spring-boot-starter-jdbc is in your dependencies (even transitively through another library), Spring Boot's DataSourceAutoConfiguration automatically runs and requires database connection details."
+      },
+      {
+        question: "What is the difference between spring.datasource.url and spring.datasource.jdbc-url?",
+        answer: "In Spring Boot 2.x and 3.x with HikariCP, spring.datasource.url is the standard property mapped automatically. If you define a custom HikariDataSource bean directly without DataSourceProperties, you must use spring.datasource.hikari.jdbc-url."
+      },
+      {
+        question: "Can I use H2 for tests and PostgreSQL for production in the same project?",
+        answer: "Yes! Add PostgreSQL as runtime scope and H2 as test scope in pom.xml. Provide production connection parameters in application.properties and H2 settings in src/test/resources/application.properties."
+      },
+      {
+        question: "How do I fix this error when deploying to AWS, Heroku, or Render?",
+        answer: "PaaS providers often provide a single DATABASE_URL environment variable (e.g. postgres://user:pass@host:5432/db). In Spring Boot, map this by parsing the URL or using spring.datasource.url=${DATABASE_URL} with a jdbc: prefix (jdbc:postgresql://host:5432/db)."
+      },
+      {
+        question: "Does excluding DataSourceAutoConfiguration break other Spring Boot features?",
+        answer: "No. It simply disables automatic DataSource bean creation. Your web endpoints, security, scheduling, and other features will function normally without attempting to connect to a relational database."
       }
     ],
-    relatedErrors: ["spring-boot-bean-creation-exception"],
-    relatedTutorials: ["spring-boot-postgresql"]
+    relatedErrors: ["spring-boot-bean-creation-exception", "spring-boot-port-8080-already-in-use"],
+    relatedTutorials: ["spring-boot-postgresql", "spring-boot-mongodb", "spring-boot-rest-api-tutorial"]
   },
   {
     title: "Spring Boot Bean Creation Exception",

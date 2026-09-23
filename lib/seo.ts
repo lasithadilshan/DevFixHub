@@ -224,3 +224,36 @@ export function generateToolSchema({
     },
   };
 }
+
+export function generateHowToSchema({
+  name,
+  description,
+  url,
+  steps,
+}: {
+  name: string;
+  description: string;
+  url: string;
+  steps: {
+    title: string;
+    description: string;
+    command?: string;
+    code?: string;
+  }[];
+}) {
+  const fullUrl = url.startsWith("http") ? url : `${SITE_CONFIG.url}${url}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": name,
+    "description": description,
+    "step": steps.map((step, index) => ({
+      "@type": "HowToStep",
+      "position": index + 1,
+      "name": step.title,
+      "text": step.description + (step.command ? ` Command: ${step.command}` : ""),
+      "url": `${fullUrl}#step-${index + 1}`,
+    })),
+  };
+}
+
